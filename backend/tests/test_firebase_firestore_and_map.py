@@ -242,6 +242,9 @@ def test_firestore_rules_file_exists_and_enforces_least_privilege():
     assert "isOwner" in content
     assert "password" in content  # Checks for password denial check
     assert "user_activity" in content
+    assert "match /procurement_history/{procurementId}" in content
+    assert "request.resource.data.uid == request.auth.uid" in content
+    assert "allow read, delete: if isOwner(userId);" in content
 
 
 # ==============================================================================
