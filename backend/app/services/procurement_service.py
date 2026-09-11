@@ -10,6 +10,9 @@ from backend.app.models.responses import (
     SourcingRecommendationItem,
     MapPointItem,
     GroundedExplanation
+    ,PackageSourcing
+    ,SearchExpansion
+    ,LocationModel
 )
 from backend.app.services.normalization_service import NormalizationService
 from backend.app.services.hybrid_retrieval_service import HybridRetrievalService
@@ -100,7 +103,12 @@ class ProcurementService:
             evaluated_items.append(item_eval)
 
         # 3. Sourcing Recommendations & Location Mapping
-        sourcing_recs = self.sourcing_service.generate_recommendations(evaluated_items)
+        sourcing_recs = self.sourcing_service.generate_recommendations(
+            evaluated_items,
+            buyer_latitude=request.buyer_latitude,
+            buyer_longitude=request.buyer_longitude,
+            search_radius_km=request.search_radius_km
+        )
         map_points = self.sourcing_service.build_map_points(sourcing_recs)
         logger.info(f"[PROCUREMENT] Identified {len(sourcing_recs)} sourcing options ({len(map_points)} unique map coordinates).")
 
@@ -119,6 +127,28 @@ class ProcurementService:
             sourcing_recs=sourcing_recs
         )
 
+        buyer_location = None
+        if request.buyer_latitude is not None and request.buyer_longitude is not None:
+            buyer_location = LocationModel(
+                city="Buyer-selected location",
+                state="India",
+                latitude=request.buyer_latitude,
+                longitude=request.buyer_longitude
+            )
+
+        item_names_with_sources = {
+            item_name
+            for recommendation in sourcing_recs
+            for item_name in recommendation.supported_items
+        }
+        all_items_have_sources = all(item.item_name in item_names_with_sources for item in evaluated_items)
+        package_strategy = "PACKAGE_SOURCING" if sourcing_recs and len({r.source_id for r in sourcing_recs}) == 1 and all_items_have_sources else "ITEM_BY_ITEM_SOURCING"
+        package_explanation = (
+            "One registry source covers every requested item; buyer must still verify vendor identity and compliance before approval."
+            if package_strategy == "PACKAGE_SOURCING"
+            else "Item-level sourcing is preferred because no single verified official supplier was established for every requested item."
+        )
+
         return ProcurementAnalysisResponse(
             request_id=req_id,
             company=company,
@@ -127,6 +157,15 @@ class ProcurementService:
             items=evaluated_items,
             package_evaluation=package_eval,
             recommendations=sourcing_recs,
+            official_records=[
+                recommendation for recommendation in sourcing_recs
+                if recommendation.official_record_status == "DOCUMENTED_OFFICIAL_RECORD"
+            ],
             map_points=map_points,
-            explanation=explanation
+            explanation=explanation,
+            search_expansion=self.sourcing_service.last_search_expansion,
+            package_sourcing=PackageSourcing(strategy=package_strategy, explanation=package_explanation),
+            buyer_location=buyer_location,
+            budget_status="COST_UNKNOWN",
+            package_total_cost=None
         )

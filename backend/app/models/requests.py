@@ -39,6 +39,11 @@ class ProcurementAnalysisRequest(BaseModel):
         le=20,
         description="Number of standards to retrieve per item"
     )
+    buyer_latitude: Optional[float] = Field(default=None, ge=6.0, le=37.5)
+    buyer_longitude: Optional[float] = Field(default=None, ge=68.0, le=97.5)
+    search_radius_km: Optional[float] = Field(default=100.0, gt=0.0, le=5000.0)
+    budget_amount: Optional[float] = Field(default=None, ge=0.0)
+    budget_tolerance_pct: float = Field(default=10.0, ge=0.0, le=100.0)
 
 class ManualVerifyRequest(BaseModel):
     reference_id: Optional[str] = None

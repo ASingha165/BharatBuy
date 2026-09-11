@@ -177,6 +177,17 @@ export const SourcingRecommendations: React.FC<SourcingRecommendationsProps> = (
                     <MapPin className="w-3.5 h-3.5 text-error shrink-0" />
                     <span className="truncate">{locStr}</span>
                   </p>
+                  <div className="flex flex-wrap gap-1.5 text-[10px] font-mono">
+                    <span className="border border-surface-container-high px-1.5 py-0.5 rounded-DEFAULT text-secondary">
+                      {rec.distance_from_buyer_km != null ? `${rec.distance_from_buyer_km} km / ${rec.range_status || 'DISTANCE'}` : 'DISTANCE UNKNOWN'}
+                    </span>
+                    <span className="border border-surface-container-high px-1.5 py-0.5 rounded-DEFAULT text-secondary">
+                      {rec.official_record_status || 'UNVERIFIED'}
+                    </span>
+                    <span className="border border-amber-200 bg-amber-50 text-amber-800 px-1.5 py-0.5 rounded-DEFAULT">
+                      GSTIN: {rec.vendor_identity?.gstin_verification.status || 'UNVERIFIED'}
+                    </span>
+                  </div>
                 </div>
 
                 {/* Suitability & Trust Badges */}
@@ -227,7 +238,7 @@ export const SourcingRecommendations: React.FC<SourcingRecommendationsProps> = (
                       <span>Requires Live Verification (Static Record on File)</span>
                     </div>
                     <p className="text-[10px] text-secondary leading-snug">
-                      Static factory record / CML schedule on file. Current operational validity must be audited on official BIS portal (<em>manakonline.in</em>) prior to buyer approval.
+                      Static registry record only. GST registration and current operational validity must be verified before buyer approval.
                     </p>
                   </div>
                 ) : (

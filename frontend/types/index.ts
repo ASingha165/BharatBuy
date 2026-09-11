@@ -104,6 +104,11 @@ export interface ProcurementAnalysisRequest {
   description?: string;
   requirements: ProcurementRequirementItem[];
   top_k_per_item?: number;
+  buyer_latitude?: number;
+  buyer_longitude?: number;
+  search_radius_km?: number;
+  budget_amount?: number;
+  budget_tolerance_pct?: number;
 }
 
 export interface NormalizedRequirementItem {
@@ -300,6 +305,39 @@ export interface SourcingRecommendationItem {
   explanation?: string;
   reasoning?: string[];
   score_breakdown?: ScoreBreakdown;
+  vendor_identity?: VendorIdentity;
+  official_record_status?: string;
+  official_record_source?: string;
+  distance_from_buyer_km?: number | null;
+  range_status?: string;
+  cost_assessment?: CostAssessment;
+}
+
+export interface GSTINVerification {
+  gstin?: string | null;
+  status: string;
+  verification_source: string;
+  verified_at?: string | null;
+  confidence: number;
+  message: string;
+}
+
+export interface VendorIdentity {
+  vendor_id?: string | null;
+  legal_name?: string | null;
+  trade_name?: string | null;
+  gstin_verification: GSTINVerification;
+  registration_status: string;
+  registered_address?: string | null;
+  provenance: string;
+}
+
+export interface CostAssessment {
+  estimated_unit_cost?: number | null;
+  estimated_total_cost?: number | null;
+  status: string;
+  currency: string;
+  note: string;
 }
 
 export interface SourceEvidenceResponse {
@@ -332,6 +370,9 @@ export interface MapPointItem {
   relevant_standards?: string[];
   suitability_score: number;
   evidence_preview?: string[];
+  distance_from_buyer_km?: number | null;
+  range_status?: string;
+  official_record_status?: string;
 }
 
 export interface GroundedExplanation {
@@ -351,8 +392,23 @@ export interface ProcurementAnalysisResponse {
   items: ItemComplianceEvaluation[];
   package_evaluation: PackageEvaluation;
   recommendations: SourcingRecommendationItem[];
+  official_records?: SourcingRecommendationItem[];
   map_points: MapPointItem[];
   explanation: GroundedExplanation;
+  search_expansion?: {
+    requested_radius_km?: number | null;
+    applied_radius_km?: number | null;
+    expanded: boolean;
+    expansion_steps: number[];
+    message: string;
+  };
+  package_sourcing?: {
+    strategy: string;
+    explanation: string;
+  };
+  buyer_location?: LocationModel | null;
+  budget_status?: string;
+  package_total_cost?: number | null;
 }
 
 // Authentication Types

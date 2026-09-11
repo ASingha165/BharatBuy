@@ -14,6 +14,12 @@ import {
   X,
   MapPin
 } from 'lucide-react';
+import {
+  OFFICIAL_MAP_ATTRIBUTION,
+  OFFICIAL_MAP_TILE_URL,
+  MAP_FALLBACK_ATTRIBUTION,
+  MAP_FALLBACK_TILE_URL
+} from '../lib/map-config';
 
 interface SourcingMapProps {
   points: MapPointItem[];
@@ -86,12 +92,26 @@ export const SourcingMap: React.FC<SourcingMapProps> = ({
         attributionControl: true
       });
 
-      // OpenStreetMap basemap with visible attribution.
-      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      // Government of India Bhuvan/ISRO is primary; OSM is network-failure fallback only.
+      // Fallback URL: https://tile.openstreetmap.org/{z}/{x}/{y}.png
+      const officialLayer = L.tileLayer(OFFICIAL_MAP_TILE_URL, {
         minZoom: 4,
         maxZoom: 13,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a>'
+        attribution: OFFICIAL_MAP_ATTRIBUTION
       }).addTo(map);
+      const fallbackLayer = L.tileLayer(MAP_FALLBACK_TILE_URL, {
+        minZoom: 4,
+        maxZoom: 13,
+        attribution: MAP_FALLBACK_ATTRIBUTION
+      });
+      let fallbackEnabled = false;
+      officialLayer.on('tileerror', () => {
+        if (!fallbackEnabled) {
+          fallbackEnabled = true;
+          map.removeLayer(officialLayer);
+          fallbackLayer.addTo(map);
+        }
+      });
 
       map.fitBounds(indiaBounds, { padding: [10, 10] });
 
@@ -217,6 +237,12 @@ export const SourcingMap: React.FC<SourcingMapProps> = ({
             </div>
             <div style="font-size: 11px; color: #64748b; margin-bottom: 5px;">
               📍 ${point.location}
+            </div>
+            <div style="font-size: 11px; margin-bottom: 3px;">
+              <strong style="color: #334155;">Range:</strong> ${point.distance_from_buyer_km != null ? `${point.distance_from_buyer_km} km / ${point.range_status || 'DISTANCE'}` : 'Distance unknown'}
+            </div>
+            <div style="font-size: 11px; margin-bottom: 3px;">
+              <strong style="color: #334155;">Record:</strong> ${point.official_record_status || 'UNVERIFIED'}
             </div>
             <div style="font-size: 11px; margin-bottom: 3px;">
               <strong style="color: #334155;">Items:</strong> ${point.supported_items.slice(0, 2).join(', ')}

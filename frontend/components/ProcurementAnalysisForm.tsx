@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { ProcurementAnalysisRequest, ProcurementRequirementItem } from '../types';
-import { Plus, Trash2, Building, FileText, CheckSquare, Layers, Send, ShieldAlert, History } from 'lucide-react';
+import { Plus, Trash2, Building, FileText, CheckSquare, Layers, Send, ShieldAlert, History, MapPin, LocateFixed } from 'lucide-react';
 
 interface ProcurementAnalysisFormProps {
   onSubmit: (request: ProcurementAnalysisRequest) => void;
@@ -98,6 +98,11 @@ export const ProcurementAnalysisForm: React.FC<ProcurementAnalysisFormProps> = (
   isLoading
 }) => {
   const [company, setCompany] = useState('');
+  const [buyerLatitude, setBuyerLatitude] = useState<number | undefined>(undefined);
+  const [buyerLongitude, setBuyerLongitude] = useState<number | undefined>(undefined);
+  const [searchRadiusKm, setSearchRadiusKm] = useState(100);
+  const [budgetAmount, setBudgetAmount] = useState<number | undefined>(undefined);
+  const [budgetTolerancePct, setBudgetTolerancePct] = useState(10);
   const [mode, setMode] = useState<'structured' | 'natural'>('structured');
   const [naturalText, setNaturalText] = useState('');
   const [validationError, setValidationError] = useState<string | null>(null);
@@ -143,6 +148,22 @@ export const ProcurementAnalysisForm: React.FC<ProcurementAnalysisFormProps> = (
     setValidationError(null);
   };
 
+  const handleUseMyLocation = () => {
+    if (!navigator.geolocation) {
+      setValidationError('Live location is unavailable; enter coordinates manually.');
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setBuyerLatitude(Number(position.coords.latitude.toFixed(6)));
+        setBuyerLongitude(Number(position.coords.longitude.toFixed(6)));
+        setValidationError(null);
+      },
+      () => setValidationError('Location permission was denied or unavailable. Procurement can continue with a manual location.'),
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+    );
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (isLoading) return;
@@ -162,7 +183,12 @@ export const ProcurementAnalysisForm: React.FC<ProcurementAnalysisFormProps> = (
         company: company.trim(),
         description: naturalText.trim(),
         requirements: [],
-        top_k_per_item: 5
+        top_k_per_item: 5,
+        buyer_latitude: buyerLatitude,
+        buyer_longitude: buyerLongitude,
+        search_radius_km: searchRadiusKm,
+        budget_amount: budgetAmount,
+        budget_tolerance_pct: budgetTolerancePct
       });
     } else {
       // Filter out completely blank rows (item name must be non-empty)
@@ -174,7 +200,12 @@ export const ProcurementAnalysisForm: React.FC<ProcurementAnalysisFormProps> = (
       onSubmit({
         company: company.trim(),
         requirements: validItems,
-        top_k_per_item: 5
+        top_k_per_item: 5,
+        buyer_latitude: buyerLatitude,
+        buyer_longitude: buyerLongitude,
+        search_radius_km: searchRadiusKm,
+        budget_amount: budgetAmount,
+        budget_tolerance_pct: budgetTolerancePct
       });
     }
   };
@@ -283,6 +314,35 @@ export const ProcurementAnalysisForm: React.FC<ProcurementAnalysisFormProps> = (
             placeholder="e.g. Bharat Infrastructure & Power Corp"
             className="w-full bg-surface-container-low border border-outline-variant rounded-DEFAULT px-3.5 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition font-sans"
           />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 border-y border-surface-container-high py-4">
+          <div className="sm:col-span-2 lg:col-span-2">
+            <label className="block text-xs font-semibold text-on-surface mb-1.5 flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5 text-primary" /> Buyer Location
+            </label>
+            <div className="flex gap-2">
+              <input aria-label="Buyer latitude" type="number" step="any" value={buyerLatitude ?? ''} onChange={(e) => setBuyerLatitude(e.target.value ? Number(e.target.value) : undefined)} placeholder="Latitude" className="w-full bg-surface-container-low border border-outline-variant rounded-DEFAULT px-3 py-2 text-xs" />
+              <input aria-label="Buyer longitude" type="number" step="any" value={buyerLongitude ?? ''} onChange={(e) => setBuyerLongitude(e.target.value ? Number(e.target.value) : undefined)} placeholder="Longitude" className="w-full bg-surface-container-low border border-outline-variant rounded-DEFAULT px-3 py-2 text-xs" />
+              <button type="button" onClick={handleUseMyLocation} title="Use my current location" className="shrink-0 px-2.5 border border-primary text-primary rounded-DEFAULT hover:bg-surface-container"><LocateFixed className="w-4 h-4" /></button>
+            </div>
+            <p className="text-[10px] text-secondary mt-1">Optional. Location is used only for server-side distance filtering.</p>
+          </div>
+          <label className="text-xs font-semibold text-on-surface">Search radius (km)
+            <select value={searchRadiusKm} onChange={(e) => setSearchRadiusKm(Number(e.target.value))} className="mt-1 w-full bg-surface-container-low border border-outline-variant rounded-DEFAULT px-3 py-2 text-xs font-normal">
+              {[50, 100, 200, 300, 500].map((radius) => <option key={radius} value={radius}>{radius} km</option>)}
+            </select>
+          </label>
+          <div className="grid grid-cols-2 gap-2">
+            <label className="text-xs font-semibold text-on-surface">Budget (INR)
+              <input type="number" min="0" value={budgetAmount ?? ''} onChange={(e) => setBudgetAmount(e.target.value ? Number(e.target.value) : undefined)} placeholder="Optional" className="mt-1 w-full bg-surface-container-low border border-outline-variant rounded-DEFAULT px-3 py-2 text-xs font-normal" />
+            </label>
+            <label className="text-xs font-semibold text-on-surface">Tolerance
+              <select value={budgetTolerancePct} onChange={(e) => setBudgetTolerancePct(Number(e.target.value))} className="mt-1 w-full bg-surface-container-low border border-outline-variant rounded-DEFAULT px-3 py-2 text-xs font-normal">
+                {[5, 10, 20].map((tolerance) => <option key={tolerance} value={tolerance}>+/- {tolerance}%</option>)}
+              </select>
+            </label>
+          </div>
         </div>
 
         {mode === 'structured' ? (

@@ -199,6 +199,41 @@ class LocationModel(BaseModel):
     latitude: float
     longitude: float
 
+class GSTINVerification(BaseModel):
+    gstin: Optional[str] = None
+    status: str = "UNVERIFIED"
+    verification_source: str = "NOT_CONFIGURED"
+    verified_at: Optional[str] = None
+    confidence: float = Field(default=0.0, ge=0.0, le=1.0)
+    message: str = "GSTIN verification is unavailable; no authoritative provider is configured."
+
+class VendorIdentity(BaseModel):
+    vendor_id: Optional[str] = None
+    legal_name: Optional[str] = None
+    trade_name: Optional[str] = None
+    gstin_verification: GSTINVerification = Field(default_factory=GSTINVerification)
+    registration_status: str = "UNKNOWN"
+    registered_address: Optional[str] = None
+    provenance: str = "REGISTRY_ONLY"
+
+class CostAssessment(BaseModel):
+    estimated_unit_cost: Optional[float] = None
+    estimated_total_cost: Optional[float] = None
+    status: str = "COST_UNKNOWN"
+    currency: str = "INR"
+    note: str = "PRICE NOT AVAILABLE; no supplier price was provided."
+
+class SearchExpansion(BaseModel):
+    requested_radius_km: Optional[float] = None
+    applied_radius_km: Optional[float] = None
+    expanded: bool = False
+    expansion_steps: List[float] = []
+    message: str = ""
+
+class PackageSourcing(BaseModel):
+    strategy: str = "ITEM_BY_ITEM_SOURCING"
+    explanation: str = "Item-level sourcing is used because supplier capability is evaluated per procurement item."
+
 class ScoreBreakdown(BaseModel):
     category_match: float = Field(..., ge=0.0, le=1.0)
     standard_match: float = Field(..., ge=0.0, le=1.0)
@@ -268,6 +303,12 @@ class SourcingRecommendationItem(BaseModel):
     longitude: Optional[float] = None
     compliance_evidence: List[str] = []
     explanation: Optional[str] = None
+    vendor_identity: VendorIdentity = Field(default_factory=VendorIdentity)
+    official_record_status: str = "UNVERIFIED"
+    official_record_source: str = "BharatBuy registry; authoritative vendor verification unavailable"
+    distance_from_buyer_km: Optional[float] = None
+    range_status: str = "DISTANCE_UNKNOWN"
+    cost_assessment: CostAssessment = Field(default_factory=CostAssessment)
 
     def model_post_init(self, __context: Any) -> None:
         # Populate backward-compatible fields automatically if not set
@@ -349,6 +390,9 @@ class MapPointItem(BaseModel):
     relevant_standards: List[str] = []
     suitability_score: float = 0.0
     evidence_preview: List[str] = []
+    distance_from_buyer_km: Optional[float] = None
+    range_status: str = "DISTANCE_UNKNOWN"
+    official_record_status: str = "UNVERIFIED"
 
 class GroundedExplanation(BaseModel):
     summary: str
@@ -366,7 +410,13 @@ class ProcurementAnalysisResponse(BaseModel):
     items: List[ItemComplianceEvaluation]
     package_evaluation: PackageEvaluation
     recommendations: List[SourcingRecommendationItem]
+    official_records: List[SourcingRecommendationItem] = []
     map_points: List[MapPointItem]
     explanation: GroundedExplanation
+    search_expansion: SearchExpansion = Field(default_factory=SearchExpansion)
+    package_sourcing: PackageSourcing = Field(default_factory=PackageSourcing)
+    buyer_location: Optional[LocationModel] = None
+    budget_status: str = "COST_UNKNOWN"
+    package_total_cost: Optional[float] = None
 
 

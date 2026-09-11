@@ -1,5 +1,6 @@
 import os
 import json
+import math
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 from backend.app.models.responses import (
@@ -10,10 +11,12 @@ from backend.app.models.responses import (
     MapPointItem,
     SourceVerificationResponse
 )
+from backend.app.models.responses import SearchExpansion, VendorIdentity, CostAssessment
 from backend.app.models.requests import ManualVerifyRequest
 from backend.app.core.logging import logger
 from backend.app.core.config import settings
 from backend.app.services.evidence_service import EvidenceService
+from backend.app.services.gstin_verification_service import GSTINVerificationService
 
 # Path to the authoritative sourcing registry dataset
 DATA_DIR = Path(__file__).resolve().parent.parent.parent.parent / "data"
@@ -66,6 +69,8 @@ class SourcingService:
         self.registry_path = registry_file or SOURCING_REGISTRY_PATH
         self.weights = weights or dict(DEFAULT_SCORING_WEIGHTS)
         self.evidence_service = evidence_service or EvidenceService()
+        self.gstin_service = GSTINVerificationService()
+        self.last_search_expansion = SearchExpansion()
         self.sources: List[Dict[str, Any]] = self._load_sourcing_registry()
         logger.info(f"[SOURCING SERVICE] Loaded {len(self.sources)} registered sources and industrial corridors.")
 
@@ -255,7 +260,10 @@ class SourcingService:
         self,
         evaluated_items: List[ItemComplianceEvaluation],
         preferred_state: Optional[str] = None,
-        top_k: int = 8
+        top_k: int = 8,
+        buyer_latitude: Optional[float] = None,
+        buyer_longitude: Optional[float] = None,
+        search_radius_km: Optional[float] = None
     ) -> List[SourcingRecommendationItem]:
         """
         Finds and ranks eligible sources for evaluated procurement items.
@@ -263,6 +271,58 @@ class SourcingService:
         """
         recommendations: List[SourcingRecommendationItem] = []
         matched_pair_keys = set()
+        self.last_search_expansion = SearchExpansion(
+            requested_radius_km=search_radius_km,
+            applied_radius_km=search_radius_km,
+            message="Distance filtering was not requested." if buyer_latitude is None or buyer_longitude is None else "Official registry candidates filtered by distance."
+        )
+
+        def distance_km(source: Dict[str, Any]) -> Optional[float]:
+            if buyer_latitude is None or buyer_longitude is None:
+                return None
+            loc = source.get("location") or {}
+            lat = float(loc.get("latitude", 0.0))
+            lon = float(loc.get("longitude", 0.0))
+            radius = 6371.0
+            d_lat = math.radians(lat - buyer_latitude)
+            d_lon = math.radians(lon - buyer_longitude)
+            a = math.sin(d_lat / 2) ** 2 + math.cos(math.radians(buyer_latitude)) * math.cos(math.radians(lat)) * math.sin(d_lon / 2) ** 2
+            return round(radius * 2 * math.asin(math.sqrt(a)), 1)
+
+        def sources_for_item(item: ItemComplianceEvaluation) -> tuple[List[Dict[str, Any]], Optional[float]]:
+            if buyer_latitude is None or buyer_longitude is None or not search_radius_km:
+                return self.sources, None
+            relevant = []
+            for source in self.sources:
+                d = distance_km(source)
+                if d is not None and d <= search_radius_km:
+                    relevant.append(source)
+            if relevant:
+                return relevant, search_radius_km
+            expansion_steps = []
+            for candidate_radius in [search_radius_km * 2, search_radius_km * 4, 500.0, 2000.0, 5000.0]:
+                bounded_radius = min(candidate_radius, 5000.0)
+                if bounded_radius > search_radius_km and bounded_radius not in expansion_steps:
+                    expansion_steps.append(bounded_radius)
+            for expanded_radius in expansion_steps:
+                relevant = [s for s in self.sources if (distance_km(s) or float("inf")) <= expanded_radius]
+                if relevant:
+                    self.last_search_expansion = SearchExpansion(
+                        requested_radius_km=search_radius_km,
+                        applied_radius_km=expanded_radius,
+                        expanded=True,
+                        expansion_steps=expansion_steps[:expansion_steps.index(expanded_radius) + 1],
+                        message=f"No registry sources found within {search_radius_km:g} km; search expanded to {expanded_radius:g} km."
+                    )
+                    return relevant, expanded_radius
+            self.last_search_expansion = SearchExpansion(
+                requested_radius_km=search_radius_km,
+                applied_radius_km=None,
+                expanded=True,
+                expansion_steps=expansion_steps,
+                message="No official registry record found within the configured search expansion."
+            )
+            return [], None
 
         for item in evaluated_items:
             category_key = item.normalized_profile.category
@@ -271,7 +331,8 @@ class SourcingService:
             if item.primary_standard:
                 matching_standards_ids.append(item.primary_standard.standard_id)
 
-            for source in self.sources:
+            candidate_sources, applied_radius = sources_for_item(item)
+            for source in candidate_sources:
                 score_bd = self.calculate_score(
                     source=source,
                     item_category=category_key,
@@ -332,6 +393,11 @@ class SourcingService:
                 )
                 prov_label = self.evidence_service.derive_provenance_label(source)
                 is_demo = bool(source.get("is_demo_data") or "DEMO" in source_id.upper())
+                gstin_result = self.gstin_service.verify_authoritatively(source.get("gstin"))
+                source_distance = distance_km(source)
+                official_status = "NOT_APPLICABLE_REGION" if st_type == "SOURCING_REGION" else (
+                    "DOCUMENTED_OFFICIAL_RECORD" if prov_label in ["GOVERNMENT_RECORD", "BIS_EVIDENCE", "AUTHORITATIVE"] else "UNVERIFIED"
+                )
 
                 item_rec = SourcingRecommendationItem(
                     source_id=source_id,
@@ -353,12 +419,24 @@ class SourcingService:
                     suitability_score=suitability_norm,
                     confidence=confidence_norm,
                     reasoning=reasoning,
-                    score_breakdown=score_bd
+                    score_breakdown=score_bd,
+                    vendor_identity=VendorIdentity(
+                        vendor_id=source_id if st_type != "SOURCING_REGION" else None,
+                        legal_name=source.get("source_name") if st_type != "SOURCING_REGION" else None,
+                        gstin_verification=gstin_result,
+                        registration_status="UNKNOWN" if st_type != "SOURCING_REGION" else "NOT_APPLICABLE",
+                        provenance=prov_label
+                    ),
+                    official_record_status=official_status,
+                    official_record_source="BharatBuy registry with documented provenance; GST registration not authoritatively verified",
+                    distance_from_buyer_km=source_distance,
+                    range_status="WITHIN_RANGE" if source_distance is not None and applied_radius is not None and source_distance <= applied_radius else ("DISTANCE_UNKNOWN" if source_distance is None else "OUTSIDE_RANGE"),
+                    cost_assessment=CostAssessment()
                 )
                 recommendations.append(item_rec)
 
         # Fallback if zero items matched
-        if not recommendations and self.sources:
+        if not recommendations and self.sources and buyer_latitude is None:
             primary_src = self.sources[0]
             loc_data = primary_src["location"]
             loc_model = LocationModel(
@@ -400,7 +478,16 @@ class SourcingService:
                 suitability_score=0.55,
                 confidence=0.44,
                 reasoning=["Fallback regional industrial corridor capable of custom procurement sourcing."],
-                score_breakdown=fallback_bd
+                    score_breakdown=fallback_bd,
+                    official_record_status="NOT_APPLICABLE_REGION" if primary_src.get("source_type") == "SOURCING_REGION" else "UNVERIFIED",
+                    official_record_source="BharatBuy registry fallback; no authoritative vendor verification",
+                    vendor_identity=VendorIdentity(
+                        vendor_id=None if primary_src.get("source_type") == "SOURCING_REGION" else primary_src.get("source_id"),
+                        legal_name=None if primary_src.get("source_type") == "SOURCING_REGION" else primary_src.get("source_name"),
+                        registration_status="NOT_APPLICABLE" if primary_src.get("source_type") == "SOURCING_REGION" else "UNKNOWN",
+                        provenance=fb_prov_label
+                    ),
+                    cost_assessment=CostAssessment()
             ))
 
         # Rank descending by overall score
@@ -436,6 +523,9 @@ class SourcingService:
                     relevant_standards=rec.relevant_standards,
                     suitability_score=rec.suitability_score,
                     evidence_preview=rec.verification_evidence[:2]
+                    ,distance_from_buyer_km=rec.distance_from_buyer_km
+                    ,range_status=rec.range_status
+                    ,official_record_status=rec.official_record_status
                 ))
 
         return points
