@@ -75,6 +75,18 @@ service cloud.firestore {
         && !('password' in request.resource.data)
         && !('password_hash' in request.resource.data);
       allow delete: if false; // Users accounts are preserved
+
+      // Procurement history is a private, user-owned historical snapshot.
+      match /procurement_history/{procurementId} {
+        allow read, delete: if isOwner(userId);
+        allow create: if isOwner(userId)
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.procurement_id == procurementId;
+        allow update: if isOwner(userId)
+          && resource.data.uid == request.auth.uid
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.procurement_id == procurementId;
+      }
     }
 
     // Procurement Requests Collection: Users can access only their own requests

@@ -13,8 +13,10 @@ import { ItemEvaluationList } from '../components/ItemEvaluationList';
 import { SourcingRecommendations } from '../components/SourcingRecommendations';
 import { SourcingMap } from '../components/SourcingMap';
 import { WorkflowNavigation } from '../components/WorkflowNavigation';
+import { ProcurementHistory } from '../components/ProcurementHistory';
 import { getRecommendations, analyzeProcurement } from '../lib/api';
 import { useAuth } from '../lib/auth-context';
+import { recordProcurementHistoryFirestore, ProcurementHistoryRecord } from '../lib/firestore-service';
 import {
   RecommendationResponse,
   ProcurementAnalysisRequest,
@@ -30,7 +32,8 @@ import {
   Compass,
   ArrowRight,
   BookOpen,
-  Lock
+  Lock,
+  History as HistoryIcon
 } from 'lucide-react';
 
 export default function Home() {
@@ -38,7 +41,8 @@ export default function Home() {
   const router = useRouter();
 
   // Mode: 'procurement' (Multi-item package) vs 'search' (Single IS query)
-  const [activeTab, setActiveTab] = useState<'procurement' | 'search'>('procurement');
+  const [activeTab, setActiveTab] = useState<'procurement' | 'search' | 'history'>('procurement');
+  const [historicalNotice, setHistoricalNotice] = useState<string | null>(null);
 
   // Single Standard Search State
   const [searchData, setSearchData] = useState<RecommendationResponse | null>(null);
@@ -96,6 +100,7 @@ export default function Home() {
     try {
       const res = await analyzeProcurement(request);
       setProcurementData(res);
+      setHistoricalNotice(null);
       if (res.items && res.items.length > 0 && res.items[0].primary_standard) {
         setSelectedGraphStandard(res.items[0].primary_standard.standard_id);
       }
@@ -114,6 +119,9 @@ export default function Home() {
 
       // Persist procurement request in Cloud Firestore for authenticated user
       if (user && res.request_id) {
+        void recordProcurementHistoryFirestore({ uid: user.id }, request, res).then((saved) => {
+          if (!saved) setHistoricalNotice('Procurement analysis completed, but history could not be saved.');
+        });
         void import('../lib/firestore-service').then(({ recordProcurementRequestFirestore }) =>
           recordProcurementRequestFirestore(
             { uid: user.id },
@@ -165,6 +173,27 @@ export default function Home() {
     } finally {
       setIsProcurementLoading(false);
     }
+  };
+
+  const handleLoadHistory = (record: ProcurementHistoryRecord) => {
+    setProcurementData(record.analysis.response_snapshot as ProcurementAnalysisResponse);
+    setHistoricalNotice('Loaded from procurement history. Historical snapshot — verification status may have changed since this analysis.');
+    setActiveTab('procurement');
+  };
+
+  const handleRefreshHistory = (record: ProcurementHistoryRecord) => {
+    setHistoricalNotice(null);
+    setActiveTab('procurement');
+    void handleProcurementSubmit({
+      company: record.company_name,
+      description: record.request.description,
+      requirements: record.request.requirements || [],
+      buyer_latitude: record.location.latitude ?? undefined,
+      buyer_longitude: record.location.longitude ?? undefined,
+      search_radius_km: record.search.radius ?? undefined,
+      budget_amount: record.budget.total_budget ?? undefined,
+      budget_tolerance_pct: record.budget.tolerance ?? undefined
+    });
   };
 
   if (isAuthLoading) {
@@ -258,7 +287,29 @@ export default function Home() {
           <Compass className="w-3.5 h-3.5" />
           <span>Single Standard Search &amp; Graph</span>
         </button>
+
+        <button
+          onClick={() => setActiveTab('history')}
+          className={`flex-1 py-2 px-3 rounded-DEFAULT text-xs font-mono font-bold flex items-center justify-center gap-2 transition ${
+            activeTab === 'history'
+              ? 'bg-surface-container-lowest text-primary shadow-xs border border-surface-container-high'
+              : 'text-secondary hover:text-on-surface'
+          }`}
+        >
+          <HistoryIcon className="w-3.5 h-3.5" />
+          <span>History</span>
+        </button>
       </div>
+
+      {historicalNotice && (
+        <div className="bg-amber-50 border border-amber-200 rounded-DEFAULT px-3 py-2 text-xs text-amber-900">
+          {historicalNotice}
+        </div>
+      )}
+
+      {activeTab === 'history' && user && (
+        <ProcurementHistory uid={user.id} onLoad={handleLoadHistory} onRefresh={handleRefreshHistory} />
+      )}
 
       {/* ======================================================== */}
       {/* TAB 1: STARTUP PROCUREMENT PACKAGE ANALYSIS VIEW */}

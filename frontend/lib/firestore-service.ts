@@ -4,7 +4,12 @@ import {
   setDoc,
   updateDoc,
   collection,
-  addDoc
+  addDoc,
+  getDocs,
+  query,
+  orderBy,
+  deleteDoc,
+  serverTimestamp
 } from 'firebase/firestore';
 import { getFirestoreDb } from './firebase';
 
@@ -24,6 +29,48 @@ export interface SyncProfileOptions {
   displayName?: string;
   role?: string;
   authProvider?: 'password' | 'google';
+}
+
+export interface ProcurementHistoryRecord {
+  procurement_id: string;
+  uid: string;
+  company_name: string;
+  analysis_created_at: string;
+  updated_at: string;
+  request_status: string;
+  request: {
+    description?: string;
+    requirements: any[];
+  };
+  items: any[];
+  budget: {
+    total_budget?: number | null;
+    expected_unit_cost?: number | null;
+    tolerance?: number | null;
+  };
+  location: {
+    latitude?: number | null;
+    longitude?: number | null;
+    location_label?: string;
+  };
+  search: {
+    radius?: number | null;
+    search_expansion_status?: string;
+  };
+  sourcing: {
+    sourcing_strategy: string;
+    official_record_count: number;
+    verified_supplier_count: number;
+    recommendation_summary: string;
+  };
+  analysis: {
+    readiness?: number;
+    standards_matches: any[];
+    supplier_results: any[];
+    cost_results: any[];
+    verification_results: any[];
+    response_snapshot: any;
+  };
 }
 
 /**
@@ -163,6 +210,117 @@ export async function recordProcurementRequestFirestore(
     return true;
   } catch (err) {
     console.warn('[FIRESTORE] Error recording procurement request:', err);
+    return false;
+  }
+}
+
+export async function recordProcurementHistoryFirestore(
+  fbUser: { uid: string },
+  request: any,
+  response: any
+): Promise<boolean> {
+  if (typeof window === 'undefined' || !fbUser?.uid || !response?.request_id) return false;
+  const db = getFirestoreDb();
+  if (!db) return false;
+
+  const nowIso = new Date().toISOString();
+  const recommendations = response.recommendations || [];
+  const record: ProcurementHistoryRecord = {
+    procurement_id: response.request_id,
+    uid: fbUser.uid,
+    company_name: response.company || request.company || 'Enterprise Buyer',
+    analysis_created_at: serverTimestamp() as any,
+    updated_at: serverTimestamp() as any,
+    request_status: 'COMPLETED',
+    request: {
+      description: request.description,
+      requirements: request.requirements || []
+    },
+    items: (response.items || []).map((item: any) => ({
+      item_id: item.item_id,
+      item_name: item.item_name,
+      quantity: item.normalized_profile?.quantity,
+      unit: item.normalized_profile?.unit,
+      specifications: item.normalized_profile?.specifications,
+      applicable_standards: (item.standards || []).map((standard: any) => standard.is_code),
+      compliance_status: item.compliance_status
+    })),
+    budget: {
+      total_budget: request.budget_amount ?? null,
+      expected_unit_cost: null,
+      tolerance: request.budget_tolerance_pct ?? null
+    },
+    location: {
+      latitude: request.buyer_latitude ?? null,
+      longitude: request.buyer_longitude ?? null,
+      location_label: response.buyer_location?.city || 'Not provided'
+    },
+    search: {
+      radius: request.search_radius_km ?? null,
+      search_expansion_status: response.search_expansion?.message || 'Not expanded'
+    },
+    sourcing: {
+      sourcing_strategy: response.package_sourcing?.strategy || 'ITEM_BY_ITEM_SOURCING',
+      official_record_count: (response.official_records || []).length,
+      verified_supplier_count: recommendations.filter((item: any) => item.vendor_identity?.gstin_verification?.status === 'VERIFIED').length,
+      recommendation_summary: response.package_sourcing?.explanation || ''
+    },
+    analysis: {
+      readiness: response.package_evaluation?.overall_readiness_score,
+      standards_matches: (response.items || []).flatMap((item: any) => (item.standards || []).map((standard: any) => standard.is_code)),
+      supplier_results: recommendations,
+      cost_results: recommendations.map((item: any) => item.cost_assessment),
+      verification_results: recommendations.map((item: any) => item.vendor_identity?.gstin_verification),
+      response_snapshot: response
+    }
+  };
+
+  try {
+    await setDoc(doc(db, 'users', fbUser.uid, 'procurement_history', response.request_id), record);
+    return true;
+  } catch (err) {
+    console.warn('[FIRESTORE] Procurement history save note:', err);
+    return false;
+  }
+}
+
+export async function listProcurementHistoryFirestore(
+  fbUser: { uid: string }
+): Promise<{ records: ProcurementHistoryRecord[]; error: boolean }> {
+  if (typeof window === 'undefined' || !fbUser?.uid) return { records: [], error: true };
+  const db = getFirestoreDb();
+  if (!db) return { records: [], error: true };
+  try {
+    const historyQuery = query(collection(db, 'users', fbUser.uid, 'procurement_history'), orderBy('analysis_created_at', 'desc'));
+    const snapshot = await getDocs(historyQuery);
+    const records = snapshot.docs.map((item) => {
+      const data = item.data() as any;
+      const normalizeTimestamp = (value: any): string => {
+        if (value?.toDate) return value.toDate().toISOString();
+        return typeof value === 'string' ? value : new Date(0).toISOString();
+      };
+      return {
+        ...data,
+        analysis_created_at: normalizeTimestamp(data.analysis_created_at),
+        updated_at: normalizeTimestamp(data.updated_at)
+      } as ProcurementHistoryRecord;
+    });
+    return { records, error: false };
+  } catch (err) {
+    console.warn('[FIRESTORE] Procurement history list note:', err);
+    return { records: [], error: true };
+  }
+}
+
+export async function deleteProcurementHistoryFirestore(uid: string, procurementId: string): Promise<boolean> {
+  if (typeof window === 'undefined' || !uid || !procurementId) return false;
+  const db = getFirestoreDb();
+  if (!db) return false;
+  try {
+    await deleteDoc(doc(db, 'users', uid, 'procurement_history', procurementId));
+    return true;
+  } catch (err) {
+    console.warn('[FIRESTORE] Procurement history delete note:', err);
     return false;
   }
 }
