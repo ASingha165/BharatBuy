@@ -1,0 +1,103 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users/{userId}
+    // Document ID: userId (matches request.auth.uid)
+    // Fields:
+    //   - firebase_uid: string (matches document ID and request.auth.uid)
+    //   - email: string
+    //   - organization_name: string
+    //   - display_name: string
+    //   - role: string
+    //   - created_at: string (ISO timestamp)
+    //   - updated_at: string (ISO timestamp)
+    //   - auth_provider: string ('password' | 'google')
+    //
+    // Collection: procurement_requests/{requestId}
+    // Document ID: requestId
+    // Fields:
+    //   - firebase_uid: string (matches request.auth.uid)
+    //   - organization_name: string
+    //   - procurement_requirements: any
+    //   - normalized_request_metadata: map
+    //   - status: string
+    //   - created_at: string (ISO timestamp)
+    //   - updated_at: string (ISO timestamp)
+    //
+    // Subcollection: procurement_requests/{requestId}/items/{itemId}
+    // Fields:
+    //   - item_id: string
+    //   - product_type: string
+    //   - specifications: map
+    //   - matched_standards: list
+    //   - compliance_status: string
+    //   - created_at: string
+    //
+    // Collection: user_activity/{activityId}
+    // Document ID: activityId
+    // Fields:
+    //   - activity_id: string
+    //   - firebase_uid: string (matches request.auth.uid)
+    //   - action: string
+    //   - request_id: string (optional)
+    //   - timestamp: string (ISO timestamp)
+    //
+    // ===============================================================
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null && request.auth.uid != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Default deny: strictly block all unlisted paths
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Users Collection: Users can access and update only their own document
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId)
+        && request.resource.data.firebase_uid == userId
+        && !('password' in request.resource.data)
+        && !('password_hash' in request.resource.data);
+      allow update: if isOwner(userId)
+        && request.resource.data.firebase_uid == userId
+        && !('password' in request.resource.data)
+        && !('password_hash' in request.resource.data);
+      allow delete: if false; // Users accounts are preserved
+    }
+
+    // Procurement Requests Collection: Users can access only their own requests
+    match /procurement_requests/{requestId} {
+      allow read: if isAuthenticated() && resource.data.firebase_uid == request.auth.uid;
+      allow create: if isAuthenticated() && request.resource.data.firebase_uid == request.auth.uid;
+      allow update: if isAuthenticated() 
+        && resource.data.firebase_uid == request.auth.uid 
+        && request.resource.data.firebase_uid == request.auth.uid;
+      allow delete: if false;
+
+      // Procurement Request Items Subcollection: Guarded by parent ownership
+      match /items/{itemId} {
+        allow read, write: if isAuthenticated() 
+          && get(/databases/$(database)/documents/procurement_requests/$(requestId)).data.firebase_uid == request.auth.uid;
+      }
+    }
+
+    // User Activity Collection: Immutable append-only audit trail
+    match /user_activity/{activityId} {
+      allow read: if isAuthenticated() && resource.data.firebase_uid == request.auth.uid;
+      allow create: if isAuthenticated() && request.resource.data.firebase_uid == request.auth.uid;
+      allow update, delete: if false; // Activity records are strictly immutable
+    }
+  }
+}

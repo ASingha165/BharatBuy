@@ -1,0 +1,288 @@
+{
+  "nodes": [
+    {
+      "id": "IS-694",
+      "is_code": "IS 694",
+      "title": "PVC Insulated Cables for Working Voltages Up to 1100 V",
+      "department": "Electro-technical"
+    },
+    {
+      "id": "IS-1554-1",
+      "is_code": "IS 1554 (Part 1)",
+      "title": "PVC Insulated Heavy Duty Cables Up to 1100 V",
+      "department": "Electro-technical"
+    },
+    {
+      "id": "IS-7098-1",
+      "is_code": "IS 7098 (Part 1)",
+      "title": "XLPE Insulated PVC Sheathed Cables Up to 1100 V",
+      "department": "Electro-technical"
+    },
+    {
+      "id": "IS-7098-2",
+      "is_code": "IS 7098 (Part 2)",
+      "title": "XLPE Insulated Cables 3.3 kV to 33 kV",
+      "department": "Electro-technical"
+    },
+    {
+      "id": "IS-10810",
+      "is_code": "IS 10810",
+      "title": "Methods of Test for Cables",
+      "department": "Electro-technical"
+    },
+    {
+      "id": "IS-3043",
+      "is_code": "IS 3043",
+      "title": "Code of Practice for Earthing",
+      "department": "Electro-technical"
+    },
+    {
+      "id": "IS-15652",
+      "is_code": "IS 15652",
+      "title": "Insulating Mats for Electrical Purposes",
+      "department": "Electro-technical"
+    },
+    {
+      "id": "IS-732",
+      "is_code": "IS 732",
+      "title": "Code of Practice for Electrical Wiring Installations",
+      "department": "Electro-technical"
+    },
+    {
+      "id": "IS-456",
+      "is_code": "IS 456",
+      "title": "Plain and Reinforced Concrete \u2014 Code of Practice",
+      "department": "Civil Engineering"
+    },
+    {
+      "id": "IS-10262",
+      "is_code": "IS 10262",
+      "title": "Concrete Mix Proportioning \u2014 Guidelines",
+      "department": "Civil Engineering"
+    },
+    {
+      "id": "IS-1786",
+      "is_code": "IS 1786",
+      "title": "High Strength Deformed Steel Bars for Concrete",
+      "department": "Civil Engineering"
+    },
+    {
+      "id": "IS-2062",
+      "is_code": "IS 2062",
+      "title": "Hot Rolled Medium and High Tensile Structural Steel",
+      "department": "Civil Engineering"
+    },
+    {
+      "id": "IS-383",
+      "is_code": "IS 383",
+      "title": "Coarse and Fine Aggregates for Concrete",
+      "department": "Civil Engineering"
+    },
+    {
+      "id": "IS-800",
+      "is_code": "IS 800",
+      "title": "General Construction in Steel \u2014 Code of Practice",
+      "department": "Civil Engineering"
+    },
+    {
+      "id": "IS-1489-1",
+      "is_code": "IS 1489 (Part 1)",
+      "title": "Portland Pozzolana Cement (Fly Ash Based)",
+      "department": "Civil Engineering"
+    },
+    {
+      "id": "IS-8112",
+      "is_code": "IS 8112",
+      "title": "Ordinary Portland Cement 43 Grade",
+      "department": "Civil Engineering"
+    },
+    {
+      "id": "IS-12269",
+      "is_code": "IS 12269",
+      "title": "Ordinary Portland Cement 53 Grade",
+      "department": "Civil Engineering"
+    },
+    {
+      "id": "IS-1239-1",
+      "is_code": "IS 1239 (Part 1)",
+      "title": "Steel Tubes and Tubulars",
+      "department": "Mechanical Engineering"
+    },
+    {
+      "id": "IS-3589",
+      "is_code": "IS 3589",
+      "title": "Steel Pipes for Water and Sewage",
+      "department": "Civil Engineering"
+    },
+    {
+      "id": "IS-4984",
+      "is_code": "IS 4984",
+      "title": "HDPE Pipes for Potable Water Supplies",
+      "department": "Civil Engineering"
+    },
+    {
+      "id": "IS-14286",
+      "is_code": "IS 14286",
+      "title": "Crystalline Silicon Terrestrial Solar PV Modules",
+      "department": "Electro-technical"
+    },
+    {
+      "id": "IS-16270",
+      "is_code": "IS 16270",
+      "title": "Solar Photovoltaic Water Pumping Systems",
+      "department": "Electro-technical"
+    },
+    {
+      "id": "IS-16068",
+      "is_code": "IS 16068",
+      "title": "PV System Performance Monitoring",
+      "department": "Electro-technical"
+    },
+    {
+      "id": "IS-2190",
+      "is_code": "IS 2190",
+      "title": "Selection and Maintenance of First-Aid Fire Extinguishers",
+      "department": "Fire Safety"
+    },
+    {
+      "id": "IS-15683",
+      "is_code": "IS 15683",
+      "title": "Portable Fire Extinguishers Specification",
+      "department": "Fire Safety"
+    },
+    {
+      "id": "IS-2925",
+      "is_code": "IS 2925",
+      "title": "Specification for Industrial Safety Helmets",
+      "department": "Personal Safety"
+    },
+    {
+      "id": "IS-15298-2",
+      "is_code": "IS 15298 (Part 2)",
+      "title": "Safety Footwear Specification",
+      "department": "Personal Safety"
+    }
+  ],
+  "edges": [
+    {
+      "source": "IS-694",
+      "target": "IS-10810",
+      "relation": "TESTED_BY",
+      "description": "Testing procedures for PVC insulated cables are mandated by IS 10810."
+    },
+    {
+      "source": "IS-1554-1",
+      "target": "IS-10810",
+      "relation": "TESTED_BY",
+      "description": "Heavy duty cable physical and electrical tests follow IS 10810."
+    },
+    {
+      "source": "IS-7098-1",
+      "target": "IS-10810",
+      "relation": "TESTED_BY",
+      "description": "XLPE insulation and armor testing per IS 10810."
+    },
+    {
+      "source": "IS-7098-2",
+      "target": "IS-7098-1",
+      "relation": "COMPLEMENTS",
+      "description": "Part 2 extends XLPE cable specs for medium/high voltage applications (3.3kV-33kV)."
+    },
+    {
+      "source": "IS-732",
+      "target": "IS-694",
+      "relation": "REFERENCES",
+      "description": "Wiring installation code IS 732 mandates IS 694 compliant PVC cables."
+    },
+    {
+      "source": "IS-732",
+      "target": "IS-3043",
+      "relation": "REQUIRES_MATERIAL",
+      "description": "Wiring compliance requires earthing system installed per IS 3043."
+    },
+    {
+      "source": "IS-15652",
+      "target": "IS-732",
+      "relation": "COMPLEMENTS",
+      "description": "Insulating mats provide personnel safety in switchboard areas under IS 732."
+    },
+    {
+      "source": "IS-456",
+      "target": "IS-10262",
+      "relation": "REFERENCES",
+      "description": "Concrete structural design per IS 456 mandates mix proportioning guidelines from IS 10262."
+    },
+    {
+      "source": "IS-456",
+      "target": "IS-1786",
+      "relation": "REQUIRES_MATERIAL",
+      "description": "Reinforced concrete design relies on TMT deformed bars conforming to IS 1786."
+    },
+    {
+      "source": "IS-456",
+      "target": "IS-383",
+      "relation": "REQUIRES_MATERIAL",
+      "description": "Concrete mix requires natural coarse and fine aggregates meeting IS 383 specifications."
+    },
+    {
+      "source": "IS-456",
+      "target": "IS-8112",
+      "relation": "REQUIRES_MATERIAL",
+      "description": "Accepts 43 Grade OPC meeting IS 8112 requirements."
+    },
+    {
+      "source": "IS-456",
+      "target": "IS-12269",
+      "relation": "REQUIRES_MATERIAL",
+      "description": "Accepts 53 Grade high-strength OPC meeting IS 12269."
+    },
+    {
+      "source": "IS-456",
+      "target": "IS-1489-1",
+      "relation": "COMPLEMENTS",
+      "description": "Permits Fly Ash PPC under IS 1489 Part 1 for durable eco-friendly structures."
+    },
+    {
+      "source": "IS-800",
+      "target": "IS-2062",
+      "relation": "REQUIRES_MATERIAL",
+      "description": "Steel construction code IS 800 requires hot rolled structural steel meeting IS 2062."
+    },
+    {
+      "source": "IS-3589",
+      "target": "IS-1239-1",
+      "relation": "SUPERSEDES",
+      "description": "IS 3589 covers larger diameter (>= 168mm) water mains extending beyond IS 1239 ranges."
+    },
+    {
+      "source": "IS-4984",
+      "target": "IS-3589",
+      "relation": "COMPLEMENTS",
+      "description": "HDPE piping alternative to steel water mains under municipal distribution networks."
+    },
+    {
+      "source": "IS-16270",
+      "target": "IS-14286",
+      "relation": "REQUIRES_MATERIAL",
+      "description": "Solar pumping system arrays require silicon PV modules qualified under IS 14286."
+    },
+    {
+      "source": "IS-16068",
+      "target": "IS-14286",
+      "relation": "REFERENCES",
+      "description": "Performance monitoring applies to solar plants constructed with IS 14286 modules."
+    },
+    {
+      "source": "IS-2190",
+      "target": "IS-15683",
+      "relation": "REFERENCES",
+      "description": "Fire hazard code IS 2190 mandates portable fire extinguishers manufactured under IS 15683."
+    },
+    {
+      "source": "IS-2925",
+      "target": "IS-15298-2",
+      "relation": "COMPLEMENTS",
+      "description": "Industrial site personal protective equipment combination (Safety Helmet + Safety Shoes)."
+    }
+  ]
+}

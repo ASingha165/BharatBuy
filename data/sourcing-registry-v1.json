@@ -1,0 +1,342 @@
+[
+  {
+    "source_id": "SRC-REG-BLR-PEENYA",
+    "source_name": "Peenya Industrial Area (KIADB)",
+    "source_type": "SOURCING_REGION",
+    "verification_status": "REGION_ONLY",
+    "location": {
+      "city": "Bengaluru",
+      "state": "Karnataka",
+      "latitude": 13.0315,
+      "longitude": 77.5146
+    },
+    "categories": ["cable", "switchgear", "transformer", "electronics", "ups"],
+    "supported_standards": ["IS-694", "IS-1554-1", "IS-7098-1", "IS-2026-1", "IS-16242-1"],
+    "verification_evidence": [
+      "State Industrial Development Area under Karnataka Industrial Areas Development Board (KIADB)",
+      "Hosts multi-vendor manufacturing cluster for power cables and switchgear",
+      "Cluster-level facility; individual vendor CML license verification required prior to contract award"
+    ],
+    "description": "Major South Asian manufacturing cluster hosting licensed BIS manufacturers for power cables, switchgear, and backup power equipment."
+  },
+  {
+    "source_id": "SRC-REG-GUJ-MAKARPURA",
+    "source_name": "Makarpura Industrial Estate (GIDC)",
+    "source_type": "SOURCING_REGION",
+    "verification_status": "REGION_ONLY",
+    "location": {
+      "city": "Vadodara",
+      "state": "Gujarat",
+      "latitude": 22.2530,
+      "longitude": 73.1970
+    },
+    "categories": ["transformer", "switchgear", "cable", "solar"],
+    "supported_standards": ["IS-2026-1", "IS-7098-2", "IS-16221", "IS-1554-1"],
+    "verification_evidence": [
+      "Gujarat Industrial Development Corporation (GIDC) power equipment corridor",
+      "Specialized hub for high-voltage transformers and power transmission apparatus",
+      "Cluster-level capability; requires individual vendor CML audit"
+    ],
+    "description": "National power transmission equipment and high-voltage electrical transformer manufacturing corridor."
+  },
+  {
+    "source_id": "SRC-REG-JHK-JAMSHEDPUR",
+    "source_name": "Jamshedpur Integrated Steel Corridor",
+    "source_type": "SOURCING_REGION",
+    "verification_status": "REGION_ONLY",
+    "location": {
+      "city": "Jamshedpur",
+      "state": "Jharkhand",
+      "latitude": 22.8046,
+      "longitude": 86.2029
+    },
+    "categories": ["steel", "pipe", "rebar"],
+    "supported_standards": ["IS-1786", "IS-2062", "IS-800", "IS-1239-1", "IS-3589"],
+    "verification_evidence": [
+      "Heavy metallurgical industrial corridor in eastern India",
+      "Specialized in high-strength thermo-mechanically treated (TMT) rebars and structural sections",
+      "Cluster-level capability; individual secondary re-roller CML licenses must be audited"
+    ],
+    "description": "Premier Indian metallurgical and structural steel production hub for Fe 500/550 TMT bars and heavy hot-rolled sections."
+  },
+  {
+    "source_id": "SRC-REG-ODI-KALINGANAGAR",
+    "source_name": "Kalinga Nagar Industrial Complex (IDCO)",
+    "source_type": "SOURCING_REGION",
+    "verification_status": "REGION_ONLY",
+    "location": {
+      "city": "Jajpur",
+      "state": "Odisha",
+      "latitude": 20.9610,
+      "longitude": 86.1360
+    },
+    "categories": ["steel", "pipe", "rebar"],
+    "supported_standards": ["IS-1786", "IS-2062", "IS-3589"],
+    "verification_evidence": [
+      "Industrial Promotion and Investment Corporation of Odisha (IPICOL / IDCO) zone",
+      "Heavy primary rebar manufacturing, hot-rolled coils, and municipal piping cluster",
+      "Cluster-level sourcing zone; vendor-level testing certifications mandatory"
+    ],
+    "description": "Heavy industry hub for primary rebar manufacturing, hot-rolled coils, and large diameter municipal piping."
+  },
+  {
+    "source_id": "SRC-REG-MP-SATNA",
+    "source_name": "Satna Cement & Mineral Belt",
+    "source_type": "SOURCING_REGION",
+    "verification_status": "REGION_ONLY",
+    "location": {
+      "city": "Satna",
+      "state": "Madhya Pradesh",
+      "latitude": 24.5800,
+      "longitude": 80.8300
+    },
+    "categories": ["cement", "concrete"],
+    "supported_standards": ["IS-456", "IS-1489-1", "IS-8112", "IS-12269"],
+    "verification_evidence": [
+      "Central Indian limestone and clinker production belt",
+      "Active production of high-grade OPC 43/53 and fly-ash based PPC under BIS ISI marks",
+      "Regional sourcing zone; specific plant batch test certificate verification required"
+    ],
+    "description": "Central Indian cement production corridor producing high-grade OPC 43/53 and fly-ash based PPC under BIS ISI marks."
+  },
+  {
+    "source_id": "SRC-REG-TN-ARIYALUR",
+    "source_name": "Ariyalur Cement Manufacturing Zone",
+    "source_type": "SOURCING_REGION",
+    "verification_status": "REGION_ONLY",
+    "location": {
+      "city": "Ariyalur",
+      "state": "Tamil Nadu",
+      "latitude": 11.1400,
+      "longitude": 79.0800
+    },
+    "categories": ["cement", "concrete"],
+    "supported_standards": ["IS-1489-1", "IS-12269", "IS-456"],
+    "verification_evidence": [
+      "Southern limestone belt housing integrated cement manufacturing plants",
+      "Licensed facilities for infrastructure-grade Portland Pozzolana and Ordinary Portland Cement",
+      "Cluster-level zone; requires consignment-specific 28-day strength test results"
+    ],
+    "description": "Southern cement manufacturing cluster with major integrated plants licensed for high-strength infrastructure grade cement."
+  },
+  {
+    "source_id": "SRC-REG-GUJ-SANAND",
+    "source_name": "Sanand Renewable Energy Zone (GIDC)",
+    "source_type": "SOURCING_REGION",
+    "verification_status": "REGION_ONLY",
+    "location": {
+      "city": "Ahmedabad",
+      "state": "Gujarat",
+      "latitude": 22.9868,
+      "longitude": 72.3813
+    },
+    "categories": ["solar", "electronics", "inverter"],
+    "supported_standards": ["IS-14286", "IS-16221", "IS-16270"],
+    "verification_evidence": [
+      "Gujarat GIDC specialized green energy manufacturing estate",
+      "High-density zone for crystalline silicon PV module assembly and grid-tied solar inverters",
+      "Cluster-level zone; OEM CRS registration number must be validated per module batch"
+    ],
+    "description": "Specialized renewable energy manufacturing estate for crystalline silicon PV modules and grid-tied inverters."
+  },
+  {
+    "source_id": "SRC-REG-DEL-OKHLA",
+    "source_name": "Okhla Industrial Estate (DSIIDC)",
+    "source_type": "SOURCING_REGION",
+    "verification_status": "REGION_ONLY",
+    "location": {
+      "city": "New Delhi",
+      "state": "Delhi NCR",
+      "latitude": 28.5300,
+      "longitude": 77.2700
+    },
+    "categories": ["electronics", "switchgear", "ups", "meter"],
+    "supported_standards": ["IS-13252-1", "IS-16242-1", "IS-13779"],
+    "verification_evidence": [
+      "Delhi State Industrial and Infrastructure Development Corporation (DSIIDC) estate",
+      "Electronic equipment assembly, digital metering devices, and NABL testing laboratories",
+      "Cluster-level facility; individual OEM CRS registration required"
+    ],
+    "description": "North India electronics, IT equipment, digital energy meters, and testing laboratory hub."
+  },
+  {
+    "source_id": "SRC-REG-TN-COIMBATORE",
+    "source_name": "Coimbatore Precision Engineering Cluster",
+    "source_type": "SOURCING_REGION",
+    "verification_status": "REGION_ONLY",
+    "location": {
+      "city": "Coimbatore",
+      "state": "Tamil Nadu",
+      "latitude": 11.0168,
+      "longitude": 76.9558
+    },
+    "categories": ["valve", "pipe", "meter"],
+    "supported_standards": ["IS-778", "IS-14846", "IS-1239-1"],
+    "verification_evidence": [
+      "Recognized engineering cluster for industrial cast-iron valves, water pumps, and piping components",
+      "Conforming foundry and machining facilities aligned with BIS dimensional tolerances",
+      "Cluster-level capability; requires foundry heat-code and hydrostatic test report"
+    ],
+    "description": "National capital for industrial sluice valves, centrifugal pumps, and cast iron fittings conforming to BIS standards."
+  },
+  {
+    "source_id": "SRC-REG-PUN-LUDHIANA",
+    "source_name": "Ludhiana Engineering & Fasteners Hub",
+    "source_type": "SOURCING_REGION",
+    "verification_status": "REGION_ONLY",
+    "location": {
+      "city": "Ludhiana",
+      "state": "Punjab",
+      "latitude": 30.9010,
+      "longitude": 75.8573
+    },
+    "categories": ["steel", "pipe"],
+    "supported_standards": ["IS-2062", "IS-1239-1", "IS-1367"],
+    "verification_evidence": [
+      "Northern industrial corridor for ERW steel pipes, structural sections, and industrial fasteners",
+      "Extensive cold heading and tube mill manufacturing base",
+      "Cluster-level sourcing area; mill test certificate (MTC) required per dispatch"
+    ],
+    "description": "Northern industrial hub for structural steel fabrication, ERW steel pipes, and high-tensile industrial fasteners."
+  },
+  {
+    "source_id": "SRC-MFR-SAIL-BOKARO",
+    "source_name": "Steel Authority of India Limited (SAIL) - Bokaro Steel Plant",
+    "source_type": "MANUFACTURER",
+    "verification_status": "VERIFIED",
+    "location": {
+      "city": "Bokaro Steel City",
+      "state": "Jharkhand",
+      "latitude": 23.6693,
+      "longitude": 86.1511
+    },
+    "categories": ["steel", "rebar"],
+    "supported_standards": ["IS-1786", "IS-2062"],
+    "verification_evidence": [
+      "Statutory BIS License CML-0003042 for IS 1786 High Strength Deformed Steel Bars (Fe 500 / Fe 550D)",
+      "Central Public Sector Undertaking (Govt. of India Enterprise - Maharatna)",
+      "Integrated blast furnace & continuous casting route with in-house NABL certified metallurgy lab"
+    ],
+    "description": "Premier central public sector integrated steel plant manufacturing primary TMT rebars and structural plates conforming to IS 1786 and IS 2062."
+  },
+  {
+    "source_id": "SRC-MFR-SAIL-BHILAI",
+    "source_name": "Steel Authority of India Limited (SAIL) - Bhilai Steel Plant",
+    "source_type": "MANUFACTURER",
+    "verification_status": "VERIFIED",
+    "location": {
+      "city": "Bhilai",
+      "state": "Chhattisgarh",
+      "latitude": 21.2144,
+      "longitude": 81.3805
+    },
+    "categories": ["steel", "rebar", "pipe"],
+    "supported_standards": ["IS-1786", "IS-2062"],
+    "verification_evidence": [
+      "Statutory BIS License CML-0001928 for IS 1786 Thermo-Mechanically Treated Rebars",
+      "Central Public Sector Maharatna Enterprise with ISO 9001 and ISO 14001 certification",
+      "Primary producer guarantee: zero recycled scrap billets, strict sulfur/phosphorus control"
+    ],
+    "description": "Flagship integrated steel manufacturing unit specialized in seismic-resistant Fe 500D/550D rebar and structural sections."
+  },
+  {
+    "source_id": "SRC-MFR-BHEL-BHOPAL",
+    "source_name": "Bharat Heavy Electricals Limited (BHEL) - Heavy Electrical Plant Bhopal",
+    "source_type": "MANUFACTURER",
+    "verification_status": "VERIFIED",
+    "location": {
+      "city": "Bhopal",
+      "state": "Madhya Pradesh",
+      "latitude": 23.2599,
+      "longitude": 77.4126
+    },
+    "categories": ["transformer", "switchgear"],
+    "supported_standards": ["IS-2026-1", "IS-2026-2", "IS-16221"],
+    "verification_evidence": [
+      "BIS Approved Power Transformer & Gas Insulated Switchgear Manufacturer",
+      "Central Public Sector Enterprise (Maharatna) under Ministry of Heavy Industries",
+      "Equipped with CPRI accredited high-voltage impulse and short-circuit testing test beds"
+    ],
+    "description": "Central public sector heavy electrical manufacturing unit supplying distribution and power transformers conforming to IS 2026."
+  },
+  {
+    "source_id": "SRC-MFR-CEL-SAHIBABAD",
+    "source_name": "Central Electronics Limited (CEL) - Solar Photovoltaic Division",
+    "source_type": "MANUFACTURER",
+    "verification_status": "VERIFIED",
+    "location": {
+      "city": "Ghaziabad",
+      "state": "Uttar Pradesh",
+      "latitude": 28.6738,
+      "longitude": 77.3750
+    },
+    "categories": ["solar", "inverter", "electronics"],
+    "supported_standards": ["IS-14286", "IS-16221", "IS-16270"],
+    "verification_evidence": [
+      "Govt. of India Enterprise under Department of Scientific and Industrial Research (DSIR)",
+      "BIS Registration R-85000124 under Compulsory Registration Scheme (CRS) for IS 14286 Crystalline Silicon PV Modules",
+      "Pioneer in national solar cell fabrication with Ministry of New and Renewable Energy (MNRE) ALMM listing"
+    ],
+    "description": "Pioneering Indian public sector enterprise manufacturing certified terrestrial crystalline silicon solar photovoltaic modules and balance of systems."
+  },
+  {
+    "source_id": "SRC-MFR-CCI-TANDUR",
+    "source_name": "Cement Corporation of India (CCI) - Tandur Unit",
+    "source_type": "MANUFACTURER",
+    "verification_status": "VERIFIED",
+    "location": {
+      "city": "Tandur",
+      "state": "Telangana",
+      "latitude": 17.2500,
+      "longitude": 77.5800
+    },
+    "categories": ["cement", "concrete"],
+    "supported_standards": ["IS-1489-1", "IS-269", "IS-8112", "IS-12269"],
+    "verification_evidence": [
+      "Statutory BIS License CML-6200051280 for Portland Pozzolana Cement (IS 1489 Part 1) and OPC 43/53 Grade (IS 269)",
+      "Central Public Sector Undertaking operating under Ministry of Heavy Industries",
+      "Mandatory ISI Mark certified quality control laboratory with continuous X-ray fluorescence (XRF) clinker monitoring"
+    ],
+    "description": "Central PSU cement plant supplying verified ISI-marked Portland Pozzolana Cement (PPC) and Ordinary Portland Cement (OPC) for infrastructure projects."
+  },
+  {
+    "source_id": "SRC-MFR-ITI-BENGALURU",
+    "source_name": "ITI Limited (Indian Telephone Industries) - Bengaluru Plant",
+    "source_type": "MANUFACTURER",
+    "verification_status": "PARTIALLY_VERIFIED",
+    "location": {
+      "city": "Bengaluru",
+      "state": "Karnataka",
+      "latitude": 13.0033,
+      "longitude": 77.6744
+    },
+    "categories": ["electronics", "ups", "meter"],
+    "supported_standards": ["IS-13252-1", "IS-13779", "IS-16242-1"],
+    "verification_evidence": [
+      "Central Public Sector Enterprise under Department of Telecommunications",
+      "Active CRS registration capability for Information Technology Equipment (IS 13252 Part 1)",
+      "Manufacturer of digital smart meters and electronic power backup systems; tender-specific license schedule check required"
+    ],
+    "description": "First Central Public Sector Undertaking in independent India; produces telecom electronics, smart energy meters, and IT equipment."
+  },
+  {
+    "source_id": "SRC-DIST-NORTH-ELECTRO",
+    "source_name": "National Power Cable & Switchgear Distribution Network",
+    "source_type": "DISTRIBUTOR",
+    "verification_status": "REQUIRES_VENDOR_VERIFICATION",
+    "location": {
+      "city": "Gurugram",
+      "state": "Haryana",
+      "latitude": 28.4595,
+      "longitude": 77.0266
+    },
+    "categories": ["cable", "switchgear"],
+    "supported_standards": ["IS-694", "IS-1554-1", "IS-7098-1"],
+    "verification_evidence": [
+      "Authorized multi-brand stocking distributor for low and medium voltage industrial power cables",
+      "Third-party commercial channel entity without primary factory BIS CML license",
+      "Vendor verification required: Buyer must demand original manufacturer BIS certificate and test batch authorization before procurement"
+    ],
+    "description": "Regional distributor and stocking depot for LV/MV PVC and XLPE power distribution cables."
+  }
+]

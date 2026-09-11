@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><title>BharatBuy AI Procurement Intelligence</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-container-high": "#dce9ff", "primary-container": "#1e40af", "primary-fixed-dim": "#b8c4ff", "on-tertiary-fixed": "#2f1500", "surface-variant": "#d5e3fc", "surface-container-highest": "#d5e3fc", "error": "#ba1a1a", "on-secondary-fixed-variant": "#3f465c", "on-primary": "#ffffff", "tertiary": "#532a00", "on-secondary-fixed": "#131b2e", "on-secondary-container": "#5c647a", "surface-bright": "#f8f9ff", "inverse-on-surface": "#eaf1ff", "on-surface": "#0d1c2e", "secondary-container": "#dae2fd", "outline-variant": "#c4c5d5", "on-primary-fixed": "#001453", "tertiary-fixed": "#ffdcc3", "background": "#f8f9ff", "on-background": "#0d1c2e", "on-tertiary": "#ffffff", "on-primary-container": "#a8b8ff", "on-error-container": "#93000a", "secondary": "#565e74", "surface-tint": "#3755c3", "on-surface-variant": "#444653", "error-container": "#ffdad6", "primary": "#00288e", "surface-container": "#e6eeff", "surface-dim": "#ccdbf3", "inverse-primary": "#b8c4ff", "outline": "#757684", "on-error": "#ffffff", "on-tertiary-fixed-variant": "#6e3900", "secondary-fixed": "#dae2fd", "primary-fixed": "#dde1ff", "tertiary-container": "#743d00", "surface-container-low": "#eff4ff", "on-secondary": "#ffffff", "surface": "#f8f9ff", "secondary-fixed-dim": "#bec6e0", "tertiary-fixed-dim": "#ffb77d", "inverse-surface": "#233144", "on-tertiary-container": "#ffa85d", "surface-container-lowest": "#ffffff", "on-primary-fixed-variant": "#173bab" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "space-sm": "0.5rem", "layout-filter-rail": "20rem", "layout-sidebar": "18rem", "space-md": "0.75rem", "space-xs": "0.25rem", "space-lg": "1rem", "space-xl": "1.5rem", "space-2xl": "2rem", "space-2xs": "0.125rem", "layout-gutter": "1rem" }, "fontFamily": { "headline-md": ["Inter"], "body-sm": ["Inter"], "label-md": ["JetBrains Mono"], "body-lg": ["Inter"], "label-sm": ["JetBrains Mono"], "headline-xl": ["Inter"], "data-tabular": ["JetBrains Mono"], "label-lg": ["JetBrains Mono"], "headline-lg": ["Inter"], "body-md": ["Inter"] }, "fontSize": { "headline-md": ["18px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }], "label-md": ["11px", { "lineHeight": "14px", "letterSpacing": "0.02em", "fontWeight": "500" }], "body-lg": ["15px", { "lineHeight": "22px", "fontWeight": "400" }], "label-sm": ["10px", { "lineHeight": "12px", "letterSpacing": "0.03em", "fontWeight": "500" }], "headline-xl": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "data-tabular": ["12px", { "lineHeight": "16px", "letterSpacing": "-0.01em", "fontWeight": "400" }], "label-lg": ["13px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "600" }], "headline-lg": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "body-md": ["13px", { "lineHeight": "18px", "fontWeight": "400" }] } } } };</script><style>@layer base { html, body { width: 100vw; margin: 0; padding: 0; } body { overscroll-behavior: none; } .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); } .pt-safe { padding-top: env(safe-area-inset-top, 0px); } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; }</style></head><body class="bg-surface font-body-md text-body-md text-on-surface min-h-screen flex flex-col antialiased selection:bg-primary-fixed selection:text-on-primary-fixed"><header class="fixed top-0 w-full z-50 pt-safe bg-inverse-surface shadow-[0_1px_8px_rgba(0,0,0,0.08)]"><div class="h-20 px-space-lg flex items-center justify-between"><div class="flex items-center gap-space-sm min-w-0"><img alt="BharatBuy Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UlDyy4aS9be_5PzZoHmhZl_zeBoHRqJFqlnOcC73BHoMAHjkb_N50LEUzMc45JL_LgMDX6w4jNhfJf7mbiPJJv5d_fZmvOhEjRdR-MzehKp7JQKXJTd_uxfk-SNOjufQQmTzKk6dBgfl-nSU8NHaOWYav2juwC2jy6iFztj916o37mUStWAqUaY3tLDZjWDseci5oclNkFsnkBV1dtnTAE74Cj8Fj9N3WAXnsLJi7suhj82TyKQvr9gqWq"/><div class="flex flex-col min-w-0"><div class="flex items-center gap-space-xs"><span class="font-headline-md text-headline-md font-bold tracking-tight text-on-primary leading-none truncate">BHARATBUY</span><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-DEFAULT bg-slate-800 text-slate-200 font-label-sm text-label-sm uppercase tracking-wider"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>PROD</span></div><span class="font-label-sm text-label-sm text-surface-variant uppercase tracking-wider truncate">AI PROCUREMENT INTELLIGENCE</span></div></div><div class="flex items-center gap-space-sm flex-shrink-0"><span class="font-label-md text-label-md text-surface-container-high px-space-xs py-0.5 rounded-DEFAULT bg-white/10 hidden sm:inline truncate max-w-[120px]">Sourcing Intelligence</span><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-20 pb-24 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Sourcing Intelligence Control & Facet Bar -->
+<div class="px-space-md py-space-sm bg-surface-container-low shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[20px]">radar</span>
+<span class="font-headline-md text-headline-md text-on-surface tracking-tight">Geographic Source Matrix</span>
+</div>
+<div class="flex items-center gap-1.5 px-2 py-0.5 rounded-DEFAULT bg-surface-container text-secondary">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">38 Active Hubs</span>
+</div>
+</div>
+<!-- Scrollable Filter Chips (Statutory Industrial Classifications) -->
+<div class="flex items-center gap-space-xs overflow-x-auto pb-1 -mx-space-md px-space-md scrollbar-none">
+<button class="flex-shrink-0 px-2.5 py-1 bg-primary text-on-primary rounded-DEFAULT font-label-md text-label-md flex items-center gap-1 shadow-sm">
+<span>Category: Electrical</span>
+<span class="material-symbols-outlined text-[14px]">check</span>
+</button>
+<button class="flex-shrink-0 px-2.5 py-1 bg-surface-container-highest text-on-surface rounded-DEFAULT font-label-md text-label-md hover:bg-surface-variant transition-colors flex items-center gap-1">
+<span>Standard: IS 7098</span>
+<span class="material-symbols-outlined text-[14px]">expand_more</span>
+</button>
+<button class="flex-shrink-0 px-2.5 py-1 bg-surface-container-highest text-on-surface rounded-DEFAULT font-label-md text-label-md hover:bg-surface-variant transition-colors flex items-center gap-1">
+<span>Type: All Sources</span>
+<span class="material-symbols-outlined text-[14px]">expand_more</span>
+</button>
+<button class="flex-shrink-0 px-2.5 py-1 bg-surface-container-highest text-on-surface rounded-DEFAULT font-label-md text-label-md hover:bg-surface-variant transition-colors flex items-center gap-1">
+<span>Region: Western</span>
+<span class="material-symbols-outlined text-[14px]">expand_more</span>
+</button>
+<button class="flex-shrink-0 px-2.5 py-1 bg-surface-container text-on-surface-variant rounded-DEFAULT font-label-md text-label-md hover:bg-surface-variant transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">filter_alt</span>
+<span>More</span>
+</button>
+</div>
+</div>
+<!-- Source Type Legend & Statutory Constraint Warning -->
+<div class="px-space-md py-space-xs bg-surface-container-high flex flex-col gap-1.5">
+<div class="flex items-center justify-between flex-wrap gap-2 pt-0.5">
+<!-- Blue Marker -->
+<div class="flex items-center gap-1.5">
+<div class="w-3 h-3 rounded-DEFAULT bg-primary-container flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[9px]">factory</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">Entity (Private)</span>
+</div>
+<!-- Gold Marker -->
+<div class="flex items-center gap-1.5">
+<div class="w-3 h-3 rounded-DEFAULT bg-tertiary-container flex items-center justify-center text-on-tertiary-container">
+<span class="material-symbols-outlined text-[9px]">account_balance</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">Central PSU / Govt</span>
+</div>
+<!-- Slate Perimeter -->
+<div class="flex items-center gap-1.5">
+<div class="w-3.5 h-3.5 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined text-[9px]">hub</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">Industrial Cluster</span>
+</div>
+</div>
+<!-- Mandatory Rule Notice -->
+<div class="flex items-start gap-1.5 bg-surface-container-lowest px-2 py-1 rounded-DEFAULT">
+<span class="material-symbols-outlined text-tertiary text-[15px] flex-shrink-0 mt-0.5">info</span>
+<p class="font-label-sm text-label-sm text-on-surface leading-tight">
+<strong class="text-tertiary-container font-semibold">Statutory Rule:</strong> Industrial regions represent geographic manufacturing clusters and are <span class="underline font-semibold text-error">NEVER</span> certified suppliers under BIS/ISO audits.
+      </p>
+</div>
+</div>
+<!-- Interactive Leaflet-Style Sourcing Map Canvas -->
+<div class="relative w-full h-[340px] bg-inverse-surface overflow-hidden select-none" id="sourcingMapContainer">
+<!-- Grid Overlay (Analytical Blueprint Style) -->
+<div class="absolute inset-0 opacity-15 bg-[radial-gradient(#94a3b8_1px,transparent_1px)] [background-size:16px_16px]"></div>
+<!-- Map UI Tactical Controls -->
+<div class="absolute top-3 right-3 z-20 flex flex-col gap-1">
+<button class="w-7 h-7 bg-inverse-surface/90 text-on-primary rounded-DEFAULT flex items-center justify-center shadow-md hover:bg-slate-700 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[16px]">add</span>
+</button>
+<button class="w-7 h-7 bg-inverse-surface/90 text-on-primary rounded-DEFAULT flex items-center justify-center shadow-md hover:bg-slate-700 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[16px]">remove</span>
+</button>
+<button class="w-7 h-7 bg-inverse-surface/90 text-on-primary rounded-DEFAULT flex items-center justify-center shadow-md hover:bg-slate-700 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[16px]">my_location</span>
+</button>
+</div>
+<!-- Tactical Coordinates Stamp -->
+<div class="absolute top-3 left-3 z-20 bg-slate-900/80 px-2 py-1 rounded-DEFAULT backdrop-blur-sm">
+<div class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+<span class="font-label-sm text-label-sm text-slate-300 font-mono">LAT 22.50N • LON 73.47E (W-ZONE)</span>
+</div>
+</div>
+<!-- Tactical Vector India Territory Representation -->
+<svg class="w-full h-full object-contain pointer-events-none opacity-40" fill="none" viewbox="0 0 500 560" xmlns="http://www.w3.org/2000/svg">
+<!-- Stylized Subcontinent Geodetic Polygon -->
+<path d="M190 40 L230 35 L260 55 L285 70 L300 110 L280 140 L340 145 L380 170 L420 160 L435 190 L400 205 L360 215 L320 220 L310 260 L340 280 L350 330 L320 370 L280 430 L250 490 L240 510 L235 480 L200 420 L165 350 L140 290 L125 240 L160 210 L140 180 L130 140 L170 100 Z" fill="#334155" stroke="#64748B" stroke-dasharray="2 2" stroke-width="1.5"></path>
+<!-- State/Corridor Arteries -->
+<path d="M140 250 L200 260 L280 290 L320 370" stroke="#475569" stroke-opacity="0.6" stroke-width="1.2"></path>
+<path d="M190 120 L230 200 L240 310" stroke="#475569" stroke-opacity="0.6" stroke-width="1.2"></path>
+<path d="M240 310 L340 280" stroke="#475569" stroke-opacity="0.6" stroke-width="1.2"></path>
+</svg>
+<!-- Geographic Markers Layer -->
+<div class="absolute inset-0 z-10">
+<!-- 1. Vadodara / Halol Corridor (Industrial Cluster & Selected Entity Anchor) -->
+<div class="absolute left-[26%] top-[45%] -translate-x-1/2 -translate-y-1/2 group cursor-pointer" onclick="selectSource('polycab')">
+<!-- Radar Pulse Perimeter Ring (Industrial Cluster Representation) -->
+<div class="absolute -inset-4 rounded-full bg-secondary-container/25 animate-pulse"></div>
+<div class="absolute -inset-7 rounded-full bg-secondary-container/10"></div>
+<!-- Center Blue Source Entity Marker -->
+<div class="relative w-8 h-8 rounded-DEFAULT bg-primary shadow-lg shadow-primary/50 flex items-center justify-center transform hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-on-primary text-[18px]">factory</span>
+<span class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+</div>
+<!-- Active Map Pin Label -->
+<div class="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap px-1.5 py-0.5 rounded-DEFAULT bg-slate-900/90 text-[10px] font-label-sm text-primary-fixed shadow">
+          Halol Corridor (Selected)
+        </div>
+</div>
+<!-- 2. Navi Mumbai (Havells / Polycab Sourcing Hub) -->
+<div class="absolute left-[30%] top-[56%] -translate-x-1/2 -translate-y-1/2 cursor-pointer group" onclick="selectSource('navimumbai')">
+<div class="w-6 h-6 rounded-DEFAULT bg-primary-container shadow-md flex items-center justify-center hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-on-primary text-[14px]">precision_manufacturing</span>
+</div>
+<div class="absolute -bottom-5 left-1/2 -translate-x-1/2 whitespace-nowrap px-1 py-0.2 rounded-DEFAULT bg-slate-900/80 text-[9px] font-label-sm text-slate-300 opacity-90">
+          Navi Mumbai
+        </div>
+</div>
+<!-- 3. Durgapur & Bokaro (SAIL Central PSU Source) -->
+<div class="absolute left-[62%] top-[42%] -translate-x-1/2 -translate-y-1/2 cursor-pointer group" onclick="selectSource('sail')">
+<div class="w-7 h-7 rounded-DEFAULT bg-tertiary-container shadow-md flex items-center justify-center hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-on-tertiary-container text-[16px]">account_balance</span>
+<span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-amber-400"></span>
+</div>
+<div class="absolute -bottom-5 left-1/2 -translate-x-1/2 whitespace-nowrap px-1 py-0.2 rounded-DEFAULT bg-slate-900/80 text-[9px] font-label-sm text-tertiary-fixed opacity-90">
+          SAIL Durgapur (PSU)
+        </div>
+</div>
+<!-- 4. Kutch & Surat Renewable Belt (Solar PV Entities) -->
+<div class="absolute left-[20%] top-[40%] -translate-x-1/2 -translate-y-1/2 cursor-pointer group" onclick="selectSource('kutch')">
+<div class="w-5 h-5 rounded-DEFAULT bg-primary-container/80 shadow flex items-center justify-center hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-on-primary text-[13px]">solar_power</span>
+</div>
+<div class="absolute -bottom-5 left-1/2 -translate-x-1/2 whitespace-nowrap px-1 py-0.2 rounded-DEFAULT bg-slate-900/80 text-[9px] font-label-sm text-slate-300">
+          Kutch Solar Belt
+        </div>
+</div>
+<!-- 5. Bengaluru Peenya Industrial Hub (Secondary Cluster) -->
+<div class="absolute left-[38%] top-[72%] -translate-x-1/2 -translate-y-1/2 cursor-pointer group" onclick="selectSource('peenya')">
+<div class="w-6 h-6 rounded-full bg-secondary-container shadow flex items-center justify-center hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-on-secondary-container text-[14px]">hub</span>
+</div>
+<div class="absolute -bottom-5 left-1/2 -translate-x-1/2 whitespace-nowrap px-1 py-0.2 rounded-DEFAULT bg-slate-900/80 text-[9px] font-label-sm text-slate-300">
+          Peenya Cluster
+        </div>
+</div>
+</div>
+<!-- Geospatial Legend Overlay Bottom Left -->
+<div class="absolute bottom-2 left-2 z-20 pointer-events-none">
+<div class="bg-slate-950/80 backdrop-blur px-2 py-1 rounded-DEFAULT text-[10px] font-mono text-slate-400 flex items-center gap-2">
+<span>EPSG:4326</span>
+<span>•</span>
+<span>GRID: WGS84</span>
+<span>•</span>
+<span class="text-emerald-400">BIS GEOTAGGED</span>
+</div>
+</div>
+</div>
+<!-- Active Source Detail Panel (Analytical Bottom Inspector) -->
+<div class="px-space-md pt-space-md pb-space-lg flex flex-col gap-space-md">
+<!-- Source Header & Category Classification -->
+<div class="bg-surface-container-lowest p-space-md rounded-DEFAULT shadow-sm flex flex-col gap-space-xs">
+<div class="flex items-center justify-between gap-2">
+<div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-DEFAULT bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm uppercase font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+          SUPPLIER / SOURCE ENTITY
+        </div>
+<div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-DEFAULT bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[13px] text-tertiary">verified_user</span>
+<span>Requires Live Verification</span>
+</div>
+</div>
+<div class="mt-1">
+<h2 class="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight">Polycab India Ltd - Halol Manufacturing Unit</h2>
+<div class="flex items-center gap-1 text-secondary mt-0.5">
+<span class="material-symbols-outlined text-[15px]">location_on</span>
+<span class="font-body-sm text-body-sm">Halol, Panchmahal, Gujarat (Western Industrial Corridor)</span>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-xs mt-space-xs pt-space-xs bg-surface-container-low p-2 rounded-DEFAULT">
+<div>
+<span class="font-label-sm text-label-sm text-secondary uppercase block">Supply Capabilities</span>
+<span class="font-body-sm text-body-sm text-on-surface font-semibold">Power Cables, Wires &amp; Conductors (HT/LT)</span>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-secondary uppercase block">Applicable Mandatory Standards</span>
+<div class="flex items-center gap-1.5 mt-0.5">
+<span class="px-1.5 py-0.2 bg-surface-container-highest text-on-surface font-data-tabular text-data-tabular rounded-DEFAULT">IS 7098 (Pt 1)</span>
+<span class="px-1.5 py-0.2 bg-surface-container-highest text-on-surface font-data-tabular text-data-tabular rounded-DEFAULT">IS 694:2010</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Critical Metric Separation: Product Suitability vs Source Trust -->
+<div class="grid grid-cols-2 gap-space-sm">
+<!-- Metric 1: Product Technical Suitability -->
+<div class="bg-surface-container-lowest p-space-md rounded-DEFAULT shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider font-semibold">Product Suitability</span>
+<span class="material-symbols-outlined text-primary text-[18px]">fact_check</span>
+</div>
+<div class="my-2">
+<div class="flex items-baseline gap-1">
+<span class="font-headline-xl text-headline-xl text-primary font-bold">92</span>
+<span class="font-label-md text-label-md text-secondary">/ 100</span>
+</div>
+<!-- Compact Meter -->
+<div class="w-full h-1.5 bg-surface-container rounded-full mt-1.5 overflow-hidden">
+<div class="h-full bg-primary" style="width: 92%"></div>
+</div>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant leading-tight">
+          Evaluated on conductor metallurgy, XLPE purity &amp; technical cross-sectional tolerance compliance.
+        </p>
+</div>
+<!-- Metric 2: Source Trust Score -->
+<div class="bg-surface-container-lowest p-space-md rounded-DEFAULT shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider font-semibold">Source Trust</span>
+<span class="material-symbols-outlined text-tertiary text-[18px]">security</span>
+</div>
+<div class="my-2">
+<div class="flex items-baseline gap-1">
+<span class="font-headline-xl text-headline-xl text-tertiary-container font-bold">81</span>
+<span class="font-label-md text-label-md text-secondary">/ 100</span>
+</div>
+<!-- Compact Meter -->
+<div class="w-full h-1.5 bg-surface-container rounded-full mt-1.5 overflow-hidden">
+<div class="h-full bg-tertiary-container" style="width: 81%"></div>
+</div>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant leading-tight">
+          Assessed on financial solvency, MCA registry tenure, and regular GST/statutory filing history.
+        </p>
+</div>
+</div>
+<!-- Evidentiary Verification & Records Status -->
+<div class="bg-surface-container-lowest p-space-md rounded-DEFAULT shadow-sm flex flex-col gap-space-xs">
+<div class="flex items-center justify-between pb-space-xs">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-[18px]">description</span>
+<span class="font-headline-md text-headline-md text-on-surface">Audited Evidence Portfolio</span>
+</div>
+<span class="px-2 py-0.5 rounded-DEFAULT bg-surface-container text-on-surface font-label-md text-label-md">
+          4 Documented Records
+        </span>
+</div>
+<div class="space-y-1.5">
+<!-- Record 1: BIS CML -->
+<div class="flex items-center justify-between p-2 bg-surface-container-low rounded-DEFAULT">
+<div class="flex items-center gap-2 min-w-0">
+<span class="material-symbols-outlined text-emerald-600 text-[18px] flex-shrink-0">verified</span>
+<div class="min-w-0">
+<span class="font-body-md text-body-md text-on-surface font-medium truncate block">BIS License CM/L-3029104</span>
+<span class="font-label-sm text-label-sm text-secondary">Expiry: 31-Aug-2025 • Active Status</span>
+</div>
+</div>
+<span class="font-data-tabular text-data-tabular text-emerald-700 font-medium">VALID</span>
+</div>
+<!-- Record 2: Factory Inspection Audit -->
+<div class="flex items-center justify-between p-2 bg-surface-container-low rounded-DEFAULT">
+<div class="flex items-center gap-2 min-w-0">
+<span class="material-symbols-outlined text-tertiary text-[18px] flex-shrink-0">pending_actions</span>
+<div class="min-w-0">
+<span class="font-body-md text-body-md text-on-surface font-medium truncate block">NABL Lab Test Report #ERDA-7729</span>
+<span class="font-label-sm text-label-sm text-secondary">Logged: 14 Jan 2025 • Conductor Resistance Test</span>
+</div>
+</div>
+<span class="font-data-tabular text-data-tabular text-tertiary font-medium">RE-CHECK</span>
+</div>
+</div>
+</div>
+<!-- Primary Action Center -->
+<div class="flex flex-col sm:flex-row gap-space-xs pt-space-xs">
+<button class="flex-1 h-9 bg-primary text-on-primary rounded-DEFAULT font-label-lg text-label-lg flex items-center justify-center gap-2 shadow-sm hover:bg-primary-container active:scale-[0.99] transition-all">
+<span class="material-symbols-outlined text-[18px]">folder_open</span>
+<span>Open Evidence Drawer</span>
+</button>
+<button class="flex-1 h-9 bg-surface-container-highest text-on-surface rounded-DEFAULT font-label-lg text-label-lg flex items-center justify-center gap-2 hover:bg-surface-variant active:scale-[0.99] transition-all">
+<span class="material-symbols-outlined text-[18px]">playlist_add_check</span>
+<span>Add to Buyer Verification List</span>
+</button>
+</div>
+</div>
+<!-- Interactive JavaScript Micro-actions -->
+<script>
+    function selectSource(sourceKey) {
+      // Microinteraction feedback for mobile exploration
+      const mapContainer = document.getElementById('sourcingMapContainer');
+      if (mapContainer) {
+        mapContainer.classList.add('brightness-105');
+        setTimeout(() => {
+          mapContainer.classList.remove('brightness-105');
+        }, 150);
+      }
+    }
+  </script>
+</div></main><div class="fixed bottom-14 inset-x-0 z-40 bg-inverse-surface/95 backdrop-blur-md px-space-lg py-1 flex items-center justify-between text-surface-variant shadow-[0_-1px_6px_rgba(0,0,0,0.04)] pointer-events-none"><div class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span><span class="font-label-sm text-label-sm text-on-primary/90 font-mono">FastAPI v1.4.2 Connected</span></div><div class="truncate ml-2 text-right"><span class="font-label-sm text-label-sm text-slate-300">Decision Support Mode • Non-Autonomous</span></div></div><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(13,28,46,0.06)]" data-active-classes="text-primary font-semibold"><div class="flex justify-around items-center h-14 px-space-xs"><a class="flex flex-col items-center justify-center gap-0.5 w-16 h-12 text-secondary hover:text-on-surface transition-colors" data-path="procurement-analysis" href="#"><span class="material-symbols-outlined text-[20px]">analytics</span><span class="font-label-sm text-label-sm tracking-tight text-center leading-tight truncate w-full px-0.5">Workbench</span></a><a aria-current="page" class="flex flex-col items-center justify-center gap-0.5 w-16 h-12 transition-colors text-primary font-semibold" data-path="sourcing-intelligence" href="#"><span class="material-symbols-outlined text-[20px]">map</span><span class="font-label-sm text-label-sm tracking-tight text-center leading-tight truncate w-full px-0.5">Sourcing</span></a><a class="flex flex-col items-center justify-center gap-0.5 w-16 h-12 text-secondary hover:text-on-surface transition-colors" data-path="evidence-checklists" href="#"><span class="material-symbols-outlined text-[20px]">verified</span><span class="font-label-sm text-label-sm tracking-tight text-center leading-tight truncate w-full px-0.5">Evidence</span></a><a class="flex flex-col items-center justify-center gap-0.5 w-16 h-12 text-secondary hover:text-on-surface transition-colors" data-path="standards-bis" href="#"><span class="material-symbols-outlined text-[20px]">policy</span><span class="font-label-sm text-label-sm tracking-tight text-center leading-tight truncate w-full px-0.5">Standards</span></a><a class="flex flex-col items-center justify-center gap-0.5 w-16 h-12 text-secondary hover:text-on-surface transition-colors" data-path="procurement-history" href="#"><span class="material-symbols-outlined text-[20px]">history</span><span class="font-label-sm text-label-sm tracking-tight text-center leading-tight truncate w-full px-0.5">History</span></a></div></nav></body></html>

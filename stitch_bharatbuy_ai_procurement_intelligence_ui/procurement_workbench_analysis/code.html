@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><title>BharatBuy AI Procurement Intelligence</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-container-high": "#dce9ff", "primary-container": "#1e40af", "primary-fixed-dim": "#b8c4ff", "on-tertiary-fixed": "#2f1500", "surface-variant": "#d5e3fc", "surface-container-highest": "#d5e3fc", "error": "#ba1a1a", "on-secondary-fixed-variant": "#3f465c", "on-primary": "#ffffff", "tertiary": "#532a00", "on-secondary-fixed": "#131b2e", "on-secondary-container": "#5c647a", "surface-bright": "#f8f9ff", "inverse-on-surface": "#eaf1ff", "on-surface": "#0d1c2e", "secondary-container": "#dae2fd", "outline-variant": "#c4c5d5", "on-primary-fixed": "#001453", "tertiary-fixed": "#ffdcc3", "background": "#f8f9ff", "on-background": "#0d1c2e", "on-tertiary": "#ffffff", "on-primary-container": "#a8b8ff", "on-error-container": "#93000a", "secondary": "#565e74", "surface-tint": "#3755c3", "on-surface-variant": "#444653", "error-container": "#ffdad6", "primary": "#00288e", "surface-container": "#e6eeff", "surface-dim": "#ccdbf3", "inverse-primary": "#b8c4ff", "outline": "#757684", "on-error": "#ffffff", "on-tertiary-fixed-variant": "#6e3900", "secondary-fixed": "#dae2fd", "primary-fixed": "#dde1ff", "tertiary-container": "#743d00", "surface-container-low": "#eff4ff", "on-secondary": "#ffffff", "surface": "#f8f9ff", "secondary-fixed-dim": "#bec6e0", "tertiary-fixed-dim": "#ffb77d", "inverse-surface": "#233144", "on-tertiary-container": "#ffa85d", "surface-container-lowest": "#ffffff", "on-primary-fixed-variant": "#173bab" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "space-sm": "0.5rem", "layout-filter-rail": "20rem", "layout-sidebar": "18rem", "space-md": "0.75rem", "space-xs": "0.25rem", "space-lg": "1rem", "space-xl": "1.5rem", "space-2xl": "2rem", "space-2xs": "0.125rem", "layout-gutter": "1rem" }, "fontFamily": { "headline-md": ["Inter"], "body-sm": ["Inter"], "label-md": ["JetBrains Mono"], "body-lg": ["Inter"], "label-sm": ["JetBrains Mono"], "headline-xl": ["Inter"], "data-tabular": ["JetBrains Mono"], "label-lg": ["JetBrains Mono"], "headline-lg": ["Inter"], "body-md": ["Inter"] }, "fontSize": { "headline-md": ["18px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }], "label-md": ["11px", { "lineHeight": "14px", "letterSpacing": "0.02em", "fontWeight": "500" }], "body-lg": ["15px", { "lineHeight": "22px", "fontWeight": "400" }], "label-sm": ["10px", { "lineHeight": "12px", "letterSpacing": "0.03em", "fontWeight": "500" }], "headline-xl": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "data-tabular": ["12px", { "lineHeight": "16px", "letterSpacing": "-0.01em", "fontWeight": "400" }], "label-lg": ["13px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "600" }], "headline-lg": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "body-md": ["13px", { "lineHeight": "18px", "fontWeight": "400" }] } } } };</script><style>@layer base { html, body { width: 100vw; margin: 0; padding: 0; } body { overscroll-behavior: none; } .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); } .pt-safe { padding-top: env(safe-area-inset-top, 0px); } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; }</style></head><body class="bg-surface font-body-md text-body-md text-on-surface min-h-screen flex flex-col antialiased selection:bg-primary-fixed selection:text-on-primary-fixed"><header class="fixed top-0 w-full z-50 pt-safe bg-inverse-surface shadow-[0_1px_8px_rgba(0,0,0,0.08)]"><div class="h-20 px-space-lg flex items-center justify-between"><div class="flex items-center gap-space-sm min-w-0"><img alt="BharatBuy Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UlDyy4aS9be_5PzZoHmhZl_zeBoHRqJFqlnOcC73BHoMAHjkb_N50LEUzMc45JL_LgMDX6w4jNhfJf7mbiPJJv5d_fZmvOhEjRdR-MzehKp7JQKXJTd_uxfk-SNOjufQQmTzKk6dBgfl-nSU8NHaOWYav2juwC2jy6iFztj916o37mUStWAqUaY3tLDZjWDseci5oclNkFsnkBV1dtnTAE74Cj8Fj9N3WAXnsLJi7suhj82TyKQvr9gqWq"/><div class="flex flex-col min-w-0"><div class="flex items-center gap-space-xs"><span class="font-headline-md text-headline-md font-bold tracking-tight text-on-primary leading-none truncate">BHARATBUY</span><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-DEFAULT bg-slate-800 text-slate-200 font-label-sm text-label-sm uppercase tracking-wider"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>PROD</span></div><span class="font-label-sm text-label-sm text-surface-variant uppercase tracking-wider truncate">AI PROCUREMENT INTELLIGENCE</span></div></div><div class="flex items-center gap-space-sm flex-shrink-0"><span class="font-label-md text-label-md text-surface-container-high px-space-xs py-0.5 rounded-DEFAULT bg-white/10 hidden sm:inline truncate max-w-[120px]">Procurement Analysis</span><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-20 pb-24 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Context & Regulatory Disclaimer -->
+<div class="px-space-lg pt-space-md pb-space-sm flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Statutory Intelligence Workbench</span>
+</div>
+<span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-DEFAULT bg-surface-container text-on-surface font-mono">BOM-IN-2025-084</span>
+</div>
+<p class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">Procurement Analysis</p>
+<p class="font-body-sm text-body-sm text-secondary leading-snug">
+      Evaluate requirements, standards, compliance, sourcing suitability, and evidence before buyer approval.
+    </p>
+</div>
+<!-- Non-Autonomous Governance Warning Banner -->
+<div class="mx-space-lg mb-space-md p-space-md rounded-DEFAULT bg-surface-container flex items-start gap-space-sm shadow-sm">
+<span class="material-symbols-outlined text-primary text-[20px] flex-shrink-0 mt-0.5">verified_user</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-primary uppercase tracking-wide">Statutory Verification Prerequisite</span>
+<p class="font-body-sm text-body-sm text-secondary leading-snug mt-0.5">
+        Procurement intelligence is evidence-backed decision support. Certification validity and supplier eligibility should be independently verified before buyer approval.
+      </p>
+</div>
+</div>
+<!-- Requirements Input Header & Quick Toggles -->
+<div class="px-space-lg flex items-center justify-between mb-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-lg text-label-lg text-on-surface uppercase tracking-tight">Requirement Package</span>
+<span class="font-label-sm text-label-sm bg-primary-fixed text-on-primary-fixed px-2 py-0.5 rounded-DEFAULT font-semibold">3 ITEMS</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="px-2.5 py-1 rounded-DEFAULT bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-colors flex items-center gap-1" id="btn-load-example">
+<span class="material-symbols-outlined text-[14px]">history_edu</span>
+        Example
+      </button>
+<button class="px-2.5 py-1 rounded-DEFAULT bg-surface-container hover:bg-surface-container-high text-primary font-label-md text-label-md transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">add_circle</span>
+        Add Item
+      </button>
+</div>
+</div>
+<!-- Item Cards (BOM Stack) -->
+<div class="px-space-lg flex flex-col gap-space-sm mb-space-lg">
+<!-- Item 1 -->
+<div class="p-space-md rounded-DEFAULT bg-surface-container-lowest shadow-sm flex flex-col gap-space-xs relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-emerald-600"></div>
+<div class="flex items-start justify-between gap-space-sm pl-space-xs">
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs mb-0.5">
+<span class="font-label-sm text-label-sm px-1.5 py-0.2 rounded-DEFAULT bg-surface-container-high text-primary font-mono">IS 7098 (Pt 1)</span>
+<span class="font-label-sm text-label-sm text-secondary">Electrical &amp; Power</span>
+</div>
+<span class="font-headline-md text-headline-md text-on-surface truncate">1.1 kV XLPE power cable</span>
+</div>
+<span class="font-data-tabular text-data-tabular font-bold text-on-surface bg-surface-container px-2 py-1 rounded-DEFAULT whitespace-nowrap">
+          5,000 m
+        </span>
+</div>
+<p class="font-body-sm text-body-sm text-secondary pl-space-xs leading-relaxed">
+        Copper conductor, XLPE insulated, 4-core, heavy-duty galvanized steel flat strip armored, BIS CML active.
+      </p>
+<div class="flex items-center justify-between pt-space-xs pl-space-xs">
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-DEFAULT">
+<span class="material-symbols-outlined text-[12px]">verified</span>
+          100% Statutory Match
+        </span>
+<span class="font-label-sm text-label-sm text-secondary font-mono">HSN 8544.49.20</span>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="p-space-md rounded-DEFAULT bg-surface-container-lowest shadow-sm flex flex-col gap-space-xs relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-emerald-600"></div>
+<div class="flex items-start justify-between gap-space-sm pl-space-xs">
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs mb-0.5">
+<span class="font-label-sm text-label-sm px-1.5 py-0.2 rounded-DEFAULT bg-surface-container-high text-primary font-mono">IS 1786:2008</span>
+<span class="font-label-sm text-label-sm text-secondary">Civil &amp; Structural</span>
+</div>
+<span class="font-headline-md text-headline-md text-on-surface truncate">Fe500 TMT steel</span>
+</div>
+<span class="font-data-tabular text-data-tabular font-bold text-on-surface bg-surface-container px-2 py-1 rounded-DEFAULT whitespace-nowrap">
+          50 MT
+        </span>
+</div>
+<p class="font-body-sm text-body-sm text-secondary pl-space-xs leading-relaxed">
+        Thermo-mechanically treated bar, primary producer route, standard ductility (Fe500D), tensile ≥ 545 MPa.
+      </p>
+<div class="flex items-center justify-between pt-space-xs pl-space-xs">
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-DEFAULT">
+<span class="material-symbols-outlined text-[12px]">verified</span>
+          Mandatory Quality Order (QCO)
+        </span>
+<span class="font-label-sm text-label-sm text-secondary font-mono">HSN 7214.20.90</span>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="p-space-md rounded-DEFAULT bg-surface-container-lowest shadow-sm flex flex-col gap-space-xs relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-amber-500"></div>
+<div class="flex items-start justify-between gap-space-sm pl-space-xs">
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs mb-0.5">
+<span class="font-label-sm text-label-sm px-1.5 py-0.2 rounded-DEFAULT bg-surface-container-high text-primary font-mono">IS 14286 / IEC 61215</span>
+<span class="font-label-sm text-label-sm text-secondary">Renewable Energy</span>
+</div>
+<span class="font-headline-md text-headline-md text-on-surface truncate">Crystalline silicon PV modules</span>
+</div>
+<span class="font-data-tabular text-data-tabular font-bold text-on-surface bg-surface-container px-2 py-1 rounded-DEFAULT whitespace-nowrap">
+          100 units
+        </span>
+</div>
+<p class="font-body-sm text-body-sm text-secondary pl-space-xs leading-relaxed">
+        540Wp+ Monocrystalline PERC, MNRE ALMM List-I compliance, positive power tolerance, anti-PID glass.
+      </p>
+<div class="flex items-center justify-between pt-space-xs pl-space-xs">
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm text-amber-800 bg-amber-50 px-1.5 py-0.5 rounded-DEFAULT">
+<span class="material-symbols-outlined text-[12px]">pending_actions</span>
+          ALMM Enlistment Check
+        </span>
+<span class="font-label-sm text-label-sm text-secondary font-mono">HSN 8541.43.00</span>
+</div>
+</div>
+</div>
+<!-- Primary Analyze CTA Bar -->
+<div class="px-space-lg mb-space-lg flex flex-col gap-space-xs">
+<button class="w-full h-11 bg-primary text-on-primary rounded-DEFAULT font-label-lg text-label-lg flex items-center justify-center gap-space-sm shadow-md active:opacity-90 transition-all" id="btn-trigger-analysis">
+<span class="material-symbols-outlined text-[20px]">psychology</span>
+<span>ANALYZE PROCUREMENT PACKAGE</span>
+<span class="font-mono text-label-sm text-primary-fixed bg-white/10 px-1.5 py-0.5 rounded-DEFAULT">3 SKUs</span>
+</button>
+<div class="flex items-center justify-between px-1">
+<span class="font-label-sm text-label-sm text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">terminal</span>
+        POST /api/v1/procurement/analyze
+      </span>
+<span class="font-label-sm text-label-sm text-secondary font-mono">Payload: 2.4 kB</span>
+</div>
+</div>
+<!-- Real-time Pipeline Tracker -->
+<div class="px-space-lg mb-space-lg">
+<div class="p-space-md rounded-DEFAULT bg-surface-container-lowest shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[18px]">account_tree</span>
+<span class="font-label-md text-label-md font-semibold text-on-surface uppercase tracking-tight">Audit Pipeline Tracker</span>
+</div>
+<span class="font-label-sm text-label-sm text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-DEFAULT flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+          Live Stream
+        </span>
+</div>
+<!-- Pipeline Steps (Linear Dense Representation) -->
+<div class="flex flex-col gap-2">
+<!-- 1. Requirements -->
+<div class="flex items-center justify-between p-1.5 rounded-DEFAULT bg-surface-container-low">
+<div class="flex items-center gap-2">
+<span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center text-[12px] font-bold font-mono">✓</span>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">1. Requirement Parsing</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary font-mono">COMPLETE</span>
+</div>
+<!-- 2. Normalization -->
+<div class="flex items-center justify-between p-1.5 rounded-DEFAULT bg-surface-container-low">
+<div class="flex items-center gap-2">
+<span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center text-[12px] font-bold font-mono">✓</span>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">2. BOM Normalization</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary font-mono">COMPLETE</span>
+</div>
+<!-- 3. Standards Matching -->
+<div class="flex items-center justify-between p-1.5 rounded-DEFAULT bg-primary-fixed/30">
+<div class="flex items-center gap-2">
+<span class="w-5 h-5 rounded-full bg-primary text-on-primary flex items-center justify-center text-[11px] font-mono">3</span>
+<span class="font-body-sm text-body-sm font-semibold text-primary">3. BIS / ISO Standards Matching</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-mono font-semibold">MATCHED (3/3)</span>
+</div>
+<!-- 4. Compliance Evaluation -->
+<div class="flex items-center justify-between p-1.5 rounded-DEFAULT bg-surface-container-low">
+<div class="flex items-center gap-2">
+<span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center text-[12px] font-bold font-mono">✓</span>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">4. Statutory Compliance Engine</span>
+</div>
+<span class="font-label-sm text-label-sm text-emerald-700 font-mono">94.2%</span>
+</div>
+<!-- 5. Sourcing Intelligence -->
+<div class="flex items-center justify-between p-1.5 rounded-DEFAULT bg-surface-container-low">
+<div class="flex items-center gap-2">
+<span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center text-[12px] font-bold font-mono">✓</span>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">5. Sourcing Corridor Proximity</span>
+</div>
+<span class="font-label-sm text-label-sm text-emerald-700 font-mono">86.5%</span>
+</div>
+<!-- 6. Evidence Evaluation -->
+<div class="flex items-center justify-between p-1.5 rounded-DEFAULT bg-amber-50">
+<div class="flex items-center gap-2">
+<span class="w-5 h-5 rounded-full bg-amber-200 text-amber-900 flex items-center justify-center text-[11px] font-mono font-bold">!</span>
+<span class="font-body-sm text-body-sm font-semibold text-amber-900">6. Evidence &amp; MTC Registry</span>
+</div>
+<span class="font-label-sm text-label-sm text-amber-800 font-mono font-semibold">78.0%</span>
+</div>
+<!-- 7. Gemini Explanation -->
+<div class="flex items-center justify-between p-1.5 rounded-DEFAULT bg-surface-container-low">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[16px]">spark</span>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">7. Grounded LLM Synthesis</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-mono">GROUNDED</span>
+</div>
+</div>
+</div>
+</div>
+<!-- High-Level Summary Coverage Metrics -->
+<div class="px-space-lg mb-space-lg">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-md text-label-md text-secondary uppercase tracking-tight">System Coverage Metrics</span>
+<span class="font-label-sm text-label-sm text-secondary font-mono">N=3 SKUs</span>
+</div>
+<div class="grid grid-cols-2 gap-space-sm">
+<!-- Metric 1 -->
+<div class="p-space-md rounded-DEFAULT bg-surface-container-lowest shadow-sm flex flex-col">
+<span class="font-label-sm text-label-sm text-secondary uppercase">STANDARDS</span>
+<div class="flex items-baseline justify-between mt-1">
+<span class="font-headline-xl text-headline-xl font-bold text-on-surface">100%</span>
+<span class="font-label-sm text-label-sm text-emerald-700 bg-emerald-50 px-1 py-0.5 rounded-DEFAULT">3/3 Matched</span>
+</div>
+<span class="font-body-sm text-body-sm text-secondary mt-1">IS 7098, IS 1786, IS 14286</span>
+</div>
+<!-- Metric 2 -->
+<div class="p-space-md rounded-DEFAULT bg-surface-container-lowest shadow-sm flex flex-col">
+<span class="font-label-sm text-label-sm text-secondary uppercase">COMPLIANCE</span>
+<div class="flex items-baseline justify-between mt-1">
+<span class="font-headline-xl text-headline-xl font-bold text-on-surface">94.2%</span>
+<span class="font-label-sm text-label-sm text-emerald-700 bg-emerald-50 px-1 py-0.5 rounded-DEFAULT">High</span>
+</div>
+<span class="font-body-sm text-body-sm text-secondary mt-1">Statutory Orders Validated</span>
+</div>
+<!-- Metric 3 -->
+<div class="p-space-md rounded-DEFAULT bg-surface-container-lowest shadow-sm flex flex-col">
+<span class="font-label-sm text-label-sm text-secondary uppercase">SOURCING</span>
+<div class="flex items-baseline justify-between mt-1">
+<span class="font-headline-xl text-headline-xl font-bold text-on-surface">86.5%</span>
+<span class="font-label-sm text-label-sm text-secondary font-mono">Guj / Maha / Odisha</span>
+</div>
+<span class="font-body-sm text-body-sm text-secondary mt-1">Multi-cluster verified</span>
+</div>
+<!-- Metric 4 -->
+<div class="p-space-md rounded-DEFAULT bg-surface-container-lowest shadow-sm flex flex-col">
+<span class="font-label-sm text-label-sm text-secondary uppercase">EVIDENCE</span>
+<div class="flex items-baseline justify-between mt-1">
+<span class="font-headline-xl text-headline-xl font-bold text-amber-800">78.0%</span>
+<span class="font-label-sm text-label-sm text-amber-800 bg-amber-50 px-1 py-0.5 rounded-DEFAULT font-semibold">Incomplete</span>
+</div>
+<span class="font-body-sm text-body-sm text-secondary mt-1">Pending ALMM test certificate</span>
+</div>
+</div>
+</div>
+<!-- Package-Level Procurement Readiness Panel -->
+<div class="px-space-lg mb-space-xl">
+<div class="p-space-lg rounded-DEFAULT bg-surface-container-lowest shadow-md flex flex-col gap-space-md relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full pointer-events-none -mr-10 -mt-10"></div>
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Package Integrity Outcome</span>
+<span class="font-headline-xl text-headline-xl font-bold text-on-surface mt-0.5">79.2%</span>
+<span class="font-body-sm text-body-sm text-secondary">Aggregate Readiness Score</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="inline-flex items-center gap-1 px-2 py-1 rounded-DEFAULT bg-amber-100 text-amber-900 font-label-md text-label-md font-semibold">
+<span class="material-symbols-outlined text-[14px]">fact_check</span>
+            READY WITH VERIFICATION
+          </span>
+<span class="font-label-sm text-label-sm text-secondary mt-1 font-mono">NON-AUTONOMOUS</span>
+</div>
+</div>
+<!-- Sub-score Progress Meters -->
+<div class="flex flex-col gap-space-sm pt-space-xs">
+<!-- Standards -->
+<div class="flex flex-col gap-1">
+<div class="flex justify-between font-label-sm text-label-sm">
+<span class="text-secondary">Statutory Standards (BIS / ISO)</span>
+<span class="font-mono font-semibold text-on-surface">98%</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container rounded-DEFAULT overflow-hidden">
+<div class="h-full bg-emerald-600 rounded-DEFAULT" style="width: 98%;"></div>
+</div>
+</div>
+<!-- Regulatory Compliance -->
+<div class="flex flex-col gap-1">
+<div class="flex justify-between font-label-sm text-label-sm">
+<span class="text-secondary">Mandatory Compliance Orders</span>
+<span class="font-mono font-semibold text-on-surface">92%</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container rounded-DEFAULT overflow-hidden">
+<div class="h-full bg-emerald-600 rounded-DEFAULT" style="width: 92%;"></div>
+</div>
+</div>
+<!-- Sourcing Hub Reliability -->
+<div class="flex flex-col gap-1">
+<div class="flex justify-between font-label-sm text-label-sm">
+<span class="text-secondary">Sourcing Corridor Availability</span>
+<span class="font-mono font-semibold text-on-surface">85%</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container rounded-DEFAULT overflow-hidden">
+<div class="h-full bg-primary rounded-DEFAULT" style="width: 85%;"></div>
+</div>
+</div>
+<!-- Evidentiary Verification -->
+<div class="flex flex-col gap-1">
+<div class="flex justify-between font-label-sm text-label-sm">
+<span class="text-secondary">Original Scanned MTC &amp; Registry</span>
+<span class="font-mono font-semibold text-amber-800">78%</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container rounded-DEFAULT overflow-hidden">
+<div class="h-full bg-amber-500 rounded-DEFAULT" style="width: 78%;"></div>
+</div>
+</div>
+<!-- Buyer Live Action -->
+<div class="flex flex-col gap-1">
+<div class="flex justify-between font-label-sm text-label-sm">
+<span class="text-secondary">Live Physical Verification Action</span>
+<span class="font-mono font-semibold text-error">42% (Pending)</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container rounded-DEFAULT overflow-hidden">
+<div class="h-full bg-error rounded-DEFAULT" style="width: 42%;"></div>
+</div>
+</div>
+</div>
+<!-- Governance Sign-off Notice -->
+<div class="p-space-sm rounded-DEFAULT bg-surface-container flex items-center gap-space-xs mt-space-xs">
+<span class="material-symbols-outlined text-secondary text-[16px]">gavel</span>
+<span class="font-body-sm text-body-sm text-secondary">
+          Final purchasing approval rests strictly with the authorized buyer organization.
+        </span>
+</div>
+</div>
+</div>
+<!-- Sourcing Corridors & Geography Preview -->
+<div class="px-space-lg mb-space-2xl">
+<div class="flex items-center justify-between mb-space-xs">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[18px]">location_on</span>
+<span class="font-label-md text-label-md font-semibold text-on-surface uppercase">Corridor Proximity</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary font-mono">RADIUS: 450 KM</span>
+</div>
+<div class="w-full h-36 bg-cover bg-center rounded-DEFAULT shadow-sm relative overflow-hidden flex flex-col justify-end p-space-sm" data-location="Gujarat Industrial Hub, India" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBXo49b1t_WreBafp9Ub_Mr6Zuf8FRN4PVHpDPe7A-2XAQ50pEHYsVT_X6cxVq_X-E7N-iWmVUCwEtrST3yMv0v8Uo3QO7rj2NG_HXVdX_L1wAq_HXLQ_Yyum9rwKyfTDHKBH1RLE1jQZieDn8SfwqukLS9EiEcRKA2GmmFRzqB6s_pglwHy0x4d22SIP-wE0StGjXBAfDMLxHuXFgOhBHzLsfFu4A3I09j9SlYVpzmE6EgXV_wfeIVlg')">
+<div class="absolute inset-0 bg-gradient-to-t from-inverse-surface/90 via-inverse-surface/30 to-transparent"></div>
+<div class="relative z-10 flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-bold text-on-primary">Western Corridor (Vadodara &amp; Sanand)</span>
+<span class="font-label-sm text-label-sm text-surface-variant font-mono">14 Active CML Mills • 2 Lead Days</span>
+</div>
+<span class="px-2 py-1 bg-surface-container-lowest/90 text-on-surface rounded-DEFAULT font-label-sm text-label-sm font-semibold">
+          High Density
+        </span>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function() {
+    const triggerBtn = document.getElementById('btn-trigger-analysis');
+    const loadExampleBtn = document.getElementById('btn-load-example');
+
+    if (triggerBtn) {
+      triggerBtn.addEventListener('click', function() {
+        const originalText = this.innerHTML;
+        this.innerHTML = `
+          <span class="material-symbols-outlined text-[18px] animate-spin">refresh</span>
+          <span>EXECUTING STATUTORY AUDIT...</span>
+        `;
+        this.classList.add('opacity-80');
+        
+        setTimeout(() => {
+          this.innerHTML = `
+            <span class="material-symbols-outlined text-[18px]">check_circle</span>
+            <span>ANALYSIS COMPLETE • 79.2% READY</span>
+          `;
+          this.classList.remove('opacity-80');
+          setTimeout(() => {
+            this.innerHTML = originalText;
+          }, 2400);
+        }, 900);
+      });
+    }
+
+    if (loadExampleBtn) {
+      loadExampleBtn.addEventListener('click', function() {
+        this.classList.add('scale-95');
+        setTimeout(() => this.classList.remove('scale-95'), 150);
+      });
+    }
+  })();
+</script></main><div class="fixed bottom-14 inset-x-0 z-40 bg-inverse-surface/95 backdrop-blur-md px-space-lg py-1 flex items-center justify-between text-surface-variant shadow-[0_-1px_6px_rgba(0,0,0,0.04)] pointer-events-none"><div class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span><span class="font-label-sm text-label-sm text-on-primary/90 font-mono">FastAPI v1.4.2 Connected</span></div><div class="truncate ml-2 text-right"><span class="font-label-sm text-label-sm text-slate-300">Decision Support Mode • Non-Autonomous</span></div></div><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(13,28,46,0.06)]" data-active-classes="text-primary font-semibold"><div class="flex justify-around items-center h-14 px-space-xs"><a aria-current="page" class="flex flex-col items-center justify-center gap-0.5 w-16 h-12 transition-colors text-primary font-semibold" data-path="procurement-analysis" href="#"><span class="material-symbols-outlined text-[20px]">analytics</span><span class="font-label-sm text-label-sm tracking-tight text-center leading-tight truncate w-full px-0.5">Workbench</span></a><a class="flex flex-col items-center justify-center gap-0.5 w-16 h-12 text-secondary hover:text-on-surface transition-colors" data-path="sourcing-intelligence" href="#"><span class="material-symbols-outlined text-[20px]">map</span><span class="font-label-sm text-label-sm tracking-tight text-center leading-tight truncate w-full px-0.5">Sourcing</span></a><a class="flex flex-col items-center justify-center gap-0.5 w-16 h-12 text-secondary hover:text-on-surface transition-colors" data-path="evidence-checklists" href="#"><span class="material-symbols-outlined text-[20px]">verified</span><span class="font-label-sm text-label-sm tracking-tight text-center leading-tight truncate w-full px-0.5">Evidence</span></a><a class="flex flex-col items-center justify-center gap-0.5 w-16 h-12 text-secondary hover:text-on-surface transition-colors" data-path="standards-bis" href="#"><span class="material-symbols-outlined text-[20px]">policy</span><span class="font-label-sm text-label-sm tracking-tight text-center leading-tight truncate w-full px-0.5">Standards</span></a><a class="flex flex-col items-center justify-center gap-0.5 w-16 h-12 text-secondary hover:text-on-surface transition-colors" data-path="procurement-history" href="#"><span class="material-symbols-outlined text-[20px]">history</span><span class="font-label-sm text-label-sm tracking-tight text-center leading-tight truncate w-full px-0.5">History</span></a></div></nav></body></html>

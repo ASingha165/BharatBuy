@@ -1,0 +1,68 @@
+[
+  {
+    "source_id": "SRC-DEMO-CABLE-WORKS",
+    "source_name": "Apex Power Cables Ltd (DEMO DATA)",
+    "source_type": "MANUFACTURER",
+    "verification_status": "PARTIALLY_VERIFIED",
+    "provenance_label": "DEMO_DATA",
+    "is_demo_data": true,
+    "location": {
+      "city": "Bengaluru",
+      "state": "Karnataka",
+      "latitude": 12.9716,
+      "longitude": 77.5946
+    },
+    "categories": ["cable", "switchgear"],
+    "supported_standards": ["IS-7098-1", "IS-1554-1", "IS-694"],
+    "verification_evidence": [
+      "DEMO DATA: Simulated vendor declaration for 1.1 kV XLPE Power Distribution Cables",
+      "DEMO DATA: Simulated CML Reference CM/L-DEMO-7098 (Requires Live Portal Verification)",
+      "DEMO DATA: Laboratory test certificate simulation — Not a real-world BIS certification"
+    ],
+    "description": "DEMO DATA: Synthetic cable manufacturing unit configured to demonstrate Phase 5 verification workflow."
+  },
+  {
+    "source_id": "SRC-DEMO-STEEL-CORP",
+    "source_name": "Metro TMT Rolling Mills (DEMO DATA)",
+    "source_type": "MANUFACTURER",
+    "verification_status": "PARTIALLY_VERIFIED",
+    "provenance_label": "DEMO_DATA",
+    "is_demo_data": true,
+    "location": {
+      "city": "Jamshedpur",
+      "state": "Jharkhand",
+      "latitude": 22.8046,
+      "longitude": 86.2029
+    },
+    "categories": ["steel", "rebar"],
+    "supported_standards": ["IS-1786"],
+    "verification_evidence": [
+      "DEMO DATA: Simulated secondary steel re-roller for Fe 500D TMT bars",
+      "DEMO DATA: Simulated CML Reference CM/L-DEMO-1786 (Simulated Verification Required)",
+      "DEMO DATA: Demonstration record for training and presentation only"
+    ],
+    "description": "DEMO DATA: Synthetic secondary steel rolling mill demonstrating procurement readiness scoring."
+  },
+  {
+    "source_id": "SRC-DEMO-SOLAR-TECH",
+    "source_name": "SunPower Solar Innovations Ltd (DEMO DATA)",
+    "source_type": "MANUFACTURER",
+    "verification_status": "PARTIALLY_VERIFIED",
+    "provenance_label": "DEMO_DATA",
+    "is_demo_data": true,
+    "location": {
+      "city": "Ahmedabad",
+      "state": "Gujarat",
+      "latitude": 23.0225,
+      "longitude": 72.5714
+    },
+    "categories": ["solar", "inverter"],
+    "supported_standards": ["IS-14286", "IS-16221"],
+    "verification_evidence": [
+      "DEMO DATA: Simulated Compulsory Registration Scheme (CRS) reference R-DEMO-14286",
+      "DEMO DATA: Terrestrial crystalline silicon PV module manufacturer simulation",
+      "DEMO DATA: Demonstration record for training and presentation only"
+    ],
+    "description": "DEMO DATA: Synthetic solar PV manufacturer demonstrating CRS certification checks."
+  }
+]
