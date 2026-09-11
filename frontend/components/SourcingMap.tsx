@@ -86,11 +86,11 @@ export const SourcingMap: React.FC<SourcingMapProps> = ({
         attributionControl: true
       });
 
-      // Official Bhuvan/NRSC basemap published by ISRO, Government of India.
-      L.tileLayer('https://bhuvanmaps.nrsc.gov.in/bhuvan_ras3/server/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      // OpenStreetMap basemap with visible attribution.
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         minZoom: 4,
         maxZoom: 13,
-        attribution: '&copy; <a href="https://bhuvan.nrsc.gov.in/" target="_blank" rel="noopener noreferrer">Bhuvan / ISRO-NRSC</a>, Government of India'
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a>'
       }).addTo(map);
 
       map.fitBounds(indiaBounds, { padding: [10, 10] });
@@ -667,7 +667,7 @@ export const SourcingMap: React.FC<SourcingMapProps> = ({
           <span>Click any marker to inspect manufacturing capabilities, BIS license scope, and coordinates</span>
         </span>
         <span className="hidden sm:inline text-secondary font-mono">
-          Official Bhuvan / ISRO-NRSC Map &bull; OpenStreetMap OSRM Routing
+          OpenStreetMap Basemap &bull; OpenStreetMap OSRM Routing
         </span>
       </div>
     </div>

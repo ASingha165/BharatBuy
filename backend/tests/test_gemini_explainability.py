@@ -1,5 +1,5 @@
 """
-Tests for ExplanationService and GeminiService — updated for google.genai SDK (v2).
+Tests for ExplanationService using the google.genai SDK (v2).
 
 These tests verify:
 1. No-key configuration → deterministic fallback
