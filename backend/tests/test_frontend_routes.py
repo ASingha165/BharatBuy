@@ -78,6 +78,17 @@ def test_protected_endpoint_invalid_token_returns_401():
     )
     assert response.status_code == 401
 
+def test_procurement_endpoint_missing_token_returns_401():
+    """Procurement analysis must remain protected by Firebase authentication."""
+    response = client.post(
+        "/api/v1/procurement/analyze",
+        json={
+            "company": "Unauthenticated Buyer",
+            "requirements": [{"item": "XLPE cable", "quantity": 1, "unit": "unit", "specifications": "1.1 kV"}],
+        },
+    )
+    assert response.status_code == 401
+
 def test_protected_endpoint_valid_firebase_token_succeeds():
     """Verify protected /api/v1/auth/me succeeds with valid Firebase token."""
     uid = "usr_test_regress_401"

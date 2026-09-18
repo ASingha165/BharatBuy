@@ -9,7 +9,8 @@ router = APIRouter()
 def get_health_status():
     db_healthy = repository.check_health()
     total_stds = repository.get_total_count()
-    gemini_ready = bool(explanation_service.api_key and explanation_service._sdk_available)
+    gemini_ready = explanation_service.gemini_configured
+    gemma_ready = explanation_service.gemma_configured
     
     return HealthStatusResponse(
         status="healthy" if db_healthy else "degraded",
@@ -17,5 +18,8 @@ def get_health_status():
         model_type=settings.MODEL_TYPE,
         total_standards=total_stds,
         gemini_configured=gemini_ready,
+        gemma_configured=gemma_ready,
+        active_fast_provider=settings.AI_FAST_PROVIDER,
+        active_reasoning_provider=settings.AI_REASONING_PROVIDER,
         is_demo_mode=settings.BHARATBUY_DEMO_MODE
     )

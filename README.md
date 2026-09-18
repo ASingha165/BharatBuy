@@ -44,6 +44,16 @@ AI-powered procurement intelligence engine that analyzes procurement specificati
              Grounded Results & UI
 ```
 
+### Optional AI Explanation Providers
+
+The procurement result is always computed by the deterministic engine. AI providers only summarize that result and cannot create standards, supplier facts, coordinates, verification states, prices, or distances.
+
+- `AI_FAST_PROVIDER=gemma` selects the low-latency Gemma explanation path.
+- `AI_REASONING_PROVIDER=gemini` selects Gemini for complex evidence briefings.
+- `GEMMA_API_KEY`, `GEMMA_MODEL`, and `GEMMA_REQUEST_TIMEOUT_SECONDS` configure Gemma through the existing `google-genai` SDK. No local model download is performed.
+- If Gemini fails, Gemma is attempted for a complex briefing; if both providers are unavailable, the deterministic explanation is returned.
+- The selected provider is recorded as `gemma`, `gemini`, or `deterministic_fallback` in the response and procurement history snapshot.
+
 ---
 
 ## Pluggable ML Strategy (`MODEL_TYPE`)

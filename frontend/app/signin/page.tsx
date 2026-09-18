@@ -9,7 +9,14 @@ import { Eye, EyeOff, Lock, Mail, AlertCircle, Loader2, ArrowRight } from 'lucid
 
 export default function SignInPage() {
   const router = useRouter();
-  const { signIn, signInWithGoogle, isConfigured } = useAuth();
+  const { signIn, signInWithGoogle, isConfigured, authState } = useAuth();
+
+  // Redirect if already signed in
+  React.useEffect(() => {
+    if (authState === 'SIGNED_IN') {
+      router.push('/');
+    }
+  }, [authState, router]);
 
   // Controlled form state — strictly starts EMPTY
   const [email, setEmail] = useState<string>('');
@@ -73,6 +80,15 @@ export default function SignInPage() {
       setIsGoogleLoading(false);
     }
   };
+
+  if (authState === 'INITIALIZING' || authState === 'SIGNED_IN') {
+    return (
+      <div className="min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center px-4 py-12">
+        <Loader2 className="w-8 h-8 animate-spin text-primary mb-4" />
+        <p className="text-secondary text-sm font-mono">Verifying session...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center px-4 py-12">

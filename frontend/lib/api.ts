@@ -58,6 +58,34 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// Response interceptor to handle 401s and retry once
+apiClient.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      if (typeof window !== 'undefined') {
+        try {
+          const { getFirebaseAuth } = await import('./firebase');
+          const fbAuth = getFirebaseAuth();
+          if (fbAuth && fbAuth.currentUser) {
+            const freshToken = await fbAuth.currentUser.getIdToken(true); // force refresh
+            if (freshToken) {
+              setAuthToken(freshToken);
+              originalRequest.headers['Authorization'] = `Bearer ${freshToken.trim()}`;
+              return apiClient(originalRequest);
+            }
+          }
+        } catch (refreshErr) {
+          console.warn('[API] Could not force refresh token on 401:', refreshErr);
+        }
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const getHealth = async (): Promise<HealthStatus> => {
   const response = await apiClient.get<HealthStatus>('/health');
   return response.data;

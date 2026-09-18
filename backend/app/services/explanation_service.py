@@ -20,10 +20,12 @@ from typing import List, Dict, Any, Optional
 
 from backend.app.core.config import settings
 from backend.app.core.logging import logger
+from backend.app.services.ai_providers import GemmaProvider, GeminiProvider
 
 # Hard outer timeout (seconds) for the entire Gemini call including internal SDK retries.
 # Must be comfortably under the frontend Axios timeout (120s) while allowing one good call.
 GEMINI_HARD_TIMEOUT_SECONDS = 30.0
+GEMMA_HARD_TIMEOUT_SECONDS = 10.0
 
 # Per-model HTTP request timeout passed to the SDK.
 # Gemini API requires a minimum deadline of 10s; 15s gives comfortable headroom.
@@ -66,6 +68,24 @@ def _call_gemini_sdk(api_key: str, model: str, prompt: str, timeout: float) -> s
         raise
 
 
+def _call_gemma_sdk(api_key: str, model: str, prompt: str, timeout: float) -> str:
+    """Call a configured Gemma model through the already-installed google-genai SDK."""
+    import google.genai as genai  # noqa: PLC0415
+
+    client = genai.Client(api_key=api_key)
+    response = client.models.generate_content(
+        model=model,
+        contents=prompt,
+        config=genai.types.GenerateContentConfig(
+            http_options=genai.types.HttpOptions(timeout=int(timeout * 1000)),
+        ),
+    )
+    text = getattr(response, "text", None) or ""
+    if not text.strip():
+        raise ValueError(f"Empty response from {model}")
+    return text.strip()
+
+
 class ExplanationService:
     """
     Builds grounded procurement explanations with optional Gemini AI enrichment.
@@ -74,7 +94,7 @@ class ExplanationService:
     GroundedExplanation object regardless of Gemini availability.
     """
 
-    def __init__(self, gemini_api_key: Any = None):
+    def __init__(self, gemini_api_key: Any = None, gemma_api_key: Any = None):
         # Accept None or a sentinel object for testing
         if gemini_api_key is None or isinstance(gemini_api_key, str):
             self.api_key = gemini_api_key if isinstance(gemini_api_key, str) else settings.GEMINI_API_KEY
@@ -83,16 +103,53 @@ class ExplanationService:
             self.api_key = settings.GEMINI_API_KEY
 
         self.api_key = (self.api_key or "").strip()
+        self.gemma_api_key = (
+            gemma_api_key if isinstance(gemma_api_key, str) else settings.GEMMA_API_KEY
+        )
+        self.gemma_api_key = (self.gemma_api_key or "").strip()
         self._sdk_available = False
+        self._gemma_sdk_available = False
         self.active_model_name: Optional[str] = None
+        self.last_provider = "deterministic_fallback"
 
-        if self.api_key:
+        if self.api_key or self.gemma_api_key:
             try:
                 import google.genai  # noqa: F401
                 self._sdk_available = True
-                logger.info("[ExplanationService] google.genai SDK available. Gemini explainability enabled.")
+                self._gemma_sdk_available = True
+                logger.info("[ExplanationService] google.genai SDK available for configured AI providers.")
             except ImportError:
-                logger.warning("[ExplanationService] google.genai not installed. Gemini disabled.")
+                logger.warning("[ExplanationService] google.genai not installed. AI providers disabled.")
+
+        self.gemini_provider = GeminiProvider(
+            api_key=self.api_key,
+            model=GEMINI_MODEL_CANDIDATES[0],
+            timeout_seconds=settings.GEMINI_REQUEST_TIMEOUT_SECONDS,
+            call_fn=_call_gemini_sdk,
+            sdk_available=self._sdk_available,
+        )
+        self.gemma_provider = GemmaProvider(
+            api_key=self.gemma_api_key,
+            model=settings.GEMMA_MODEL,
+            timeout_seconds=settings.GEMMA_REQUEST_TIMEOUT_SECONDS,
+            call_fn=_call_gemma_sdk,
+            sdk_available=self._gemma_sdk_available,
+        )
+
+    @property
+    def gemini_configured(self) -> bool:
+        return bool(self.api_key and self._sdk_available)
+
+    @property
+    def gemma_configured(self) -> bool:
+        return bool(self.gemma_api_key and self._gemma_sdk_available and settings.GEMMA_MODEL)
+
+    def _sync_provider_state(self) -> None:
+        # Tests and runtime configuration can update availability after construction.
+        self.gemini_provider.api_key = self.api_key
+        self.gemini_provider._sdk_available = self._sdk_available
+        self.gemma_provider.api_key = self.gemma_api_key
+        self.gemma_provider._sdk_available = self._gemma_sdk_available
 
     # ------------------------------------------------------------------
     # Internal: bounded multi-candidate Gemini generation
@@ -137,6 +194,7 @@ class ExplanationService:
                 text = future.result(timeout=call_timeout + 1.0)
                 elapsed = time.monotonic() - t_start
                 self.active_model_name = candidate
+                self.last_provider = "gemini"
                 logger.info(f"[ExplanationService] Gemini '{candidate}' succeeded in {elapsed:.2f}s.")
                 executor.shutdown(wait=False)
                 return text
@@ -172,6 +230,28 @@ class ExplanationService:
         logger.info("[ExplanationService] All Gemini candidates exhausted — using deterministic fallback.")
         return None
 
+    def _generate_with_gemma_timeout(self, prompt: str) -> Optional[str]:
+        """Bound the fast provider so Gemma can never block procurement analysis."""
+        self._sync_provider_state()
+        if not self.gemma_configured:
+            return None
+
+        executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
+        future = executor.submit(self.gemma_provider.generate, prompt)
+        try:
+            text = future.result(timeout=GEMMA_HARD_TIMEOUT_SECONDS)
+            executor.shutdown(wait=False)
+            if text:
+                self.active_model_name = settings.GEMMA_MODEL
+                self.last_provider = "gemma"
+                logger.info("[ExplanationService] Gemma fast explanation succeeded.")
+                return text
+        except Exception as exc:
+            future.cancel()
+            executor.shutdown(wait=False)
+            logger.warning(f"[ExplanationService] Gemma fast provider failed: {str(exc)[:160]}")
+        return None
+
     # ------------------------------------------------------------------
     # Public: IS recommendation explanation (single-query path)
     # ------------------------------------------------------------------
@@ -182,6 +262,8 @@ class ExplanationService:
         features: Dict[str, Any],
         recommendations: List[Dict[str, Any]],
     ) -> str:
+        self.last_provider = "deterministic_fallback"
+        self._sync_provider_state()
         if not recommendations:
             return "No matching Indian Standards were found for the provided procurement specification."
 
@@ -202,8 +284,12 @@ class ExplanationService:
             )
         deterministic_summary = " ".join(lines)
 
-        # 2. Optional Gemini enrichment
-        if self.api_key and self._sdk_available:
+        # 2. Fast explanation path: prefer Gemma, otherwise preserve Gemini behavior.
+        # Only one provider is attempted for this simple task.
+        if (
+            settings.AI_FAST_PROVIDER.lower() == "gemma"
+            and (self.gemma_configured or self.gemini_configured)
+        ):
             context = f"Procurement Query: '{query}'\nExtracted Features: {features}\nRecommended Standards:\n"
             for r in recommendations[:3]:
                 context += (
@@ -220,8 +306,13 @@ class ExplanationService:
                 "4. Do NOT approve purchases autonomously; decision remains buyer-controlled.\n\n"
                 f"{context}"
             )
-            generated = self._generate_with_hard_timeout(prompt)
+            generated = (
+                self._generate_with_gemma_timeout(prompt)
+                if self.gemma_configured
+                else self._generate_with_hard_timeout(prompt)
+            )
             if generated:
+                self.last_provider = "gemma" if self.gemma_configured else "gemini"
                 return generated
 
         return (
@@ -241,6 +332,9 @@ class ExplanationService:
         sourcing_recs: List[Any],
     ) -> Any:
         from backend.app.models.responses import GroundedExplanation  # noqa: PLC0415
+
+        self.last_provider = "deterministic_fallback"
+        self._sync_provider_state()
 
         # 1. Build deterministic evidence lists (always runs)
         supported_data: List[str] = []
@@ -331,7 +425,8 @@ class ExplanationService:
         gemini_success = False
         synthesis_type = "GROUNDED_DETERMINISTIC_FALLBACK"
 
-        if self.api_key and self._sdk_available:
+        prompt = ""
+        if self.gemini_configured or self.gemma_configured:
             all_evidence_lines: List[str] = []
             for rec in sourcing_recs[:4]:
                 ev_recs = getattr(rec, "evidence_records", [])
@@ -373,11 +468,27 @@ MISSING PARAMETERS:
 Provide a grounded, structured technical briefing following the three-tier format.
 """
 
-            generated_briefing = self._generate_with_hard_timeout(prompt)
-            if generated_briefing:
-                summary_text = generated_briefing
-                gemini_success = True
-                synthesis_type = "LIVE_GEMINI_SYNTHESIS"
+            if self.gemini_configured and settings.AI_REASONING_PROVIDER.lower() == "gemini":
+                generated_briefing = self._generate_with_hard_timeout(prompt)
+                if generated_briefing:
+                    summary_text = generated_briefing
+                    gemini_success = True
+                    self.last_provider = "gemini"
+                    synthesis_type = "LIVE_GEMINI_SYNTHESIS"
+
+            if (
+                not gemini_success
+                and settings.AI_FAST_PROVIDER.lower() == "gemma"
+                and self.gemma_configured
+            ):
+                generated_fast = self._generate_with_gemma_timeout(
+                    prompt + "\nKeep the briefing concise while preserving all evidence labels."
+                )
+                if generated_fast:
+                    summary_text = generated_fast
+                    gemini_success = True
+                    self.last_provider = "gemma"
+                    synthesis_type = "LIVE_GEMMA_SYNTHESIS"
 
         if not gemini_success:
             summary_text = (
@@ -399,4 +510,5 @@ Provide a grounded, structured technical briefing following the three-tier forma
                 missing_info if missing_info else ["No critical engineering parameters missing from submission."]
             ),
             synthesis_type=synthesis_type,
+            ai_provider=self.last_provider,
         )

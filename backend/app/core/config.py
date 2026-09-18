@@ -9,6 +9,11 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: str = ""
     # Gemini API requires minimum deadline of 10s; 15s gives comfortable headroom.
     GEMINI_REQUEST_TIMEOUT_SECONDS: float = 15.0
+    AI_FAST_PROVIDER: str = "gemma"
+    AI_REASONING_PROVIDER: str = "gemini"
+    GEMMA_API_KEY: str = ""
+    GEMMA_MODEL: str = "gemma-3-27b-it"
+    GEMMA_REQUEST_TIMEOUT_SECONDS: float = 8.0
     
     # Database Settings: if DATABASE_URL is set (PostgreSQL/Neon), it takes precedence over SQLite
     DATABASE_URL: Optional[str] = None

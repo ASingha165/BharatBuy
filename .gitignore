@@ -47,11 +47,12 @@ Thumbs.db
 *.swp
 *.swo
 
-# Data caches & SQLite DB (keep seeds, ignore generated temp/logs)
+# Data caches & SQLite DB (keep seeds and active V5 database, ignore generated temp/logs)
 *.log
-*.db
 *.sqlite
 *.sqlite3
+*.db
+!data/standards-database-v5.db
 backend/app/__pycache__
 
 # Credentials and generated secret artifacts

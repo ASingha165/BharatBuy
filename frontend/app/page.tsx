@@ -51,10 +51,10 @@ export default function Home() {
 
   // Authentication protection redirect
   useEffect(() => {
-    if (!isAuthLoading && !user) {
+    if (authState === 'SIGNED_OUT') {
       router.push('/signin');
     }
-  }, [user, isAuthLoading, router]);
+  }, [authState, router]);
 
   // Multi-Item Procurement Analysis State
   const [procurementData, setProcurementData] = useState<ProcurementAnalysisResponse | null>(null);
@@ -68,9 +68,9 @@ export default function Home() {
 
   // Single Search Handler
   const handleSearch = async (query: string, topK: number) => {
-    if (!user || authState !== 'SIGNED_IN') {
+    if (authState !== 'SIGNED_IN') {
       setSearchError('Authentication required. Please sign in with your enterprise credentials to access recommendations.');
-      router.push('/signin');
+      if (authState === 'SIGNED_OUT') router.push('/signin');
       return;
     }
     setIsSearchLoading(true);
@@ -90,9 +90,9 @@ export default function Home() {
 
   // Procurement Package Handler
   const handleProcurementSubmit = async (request: ProcurementAnalysisRequest) => {
-    if (!user || authState !== 'SIGNED_IN') {
+    if (authState !== 'SIGNED_IN') {
       setProcurementError('Authentication required. Please sign in with your enterprise credentials to analyze procurement packages.');
-      router.push('/signin');
+      if (authState === 'SIGNED_OUT') router.push('/signin');
       return;
     }
     setIsProcurementLoading(true);
@@ -159,8 +159,7 @@ export default function Home() {
         const msg = typeof detail === 'string' ? detail : 'Please check the procurement information and try again.';
         setProcurementError(msg);
       } else if (status === 401) {
-        setProcurementError('Your session has expired. Please sign in again.');
-        router.push('/signin');
+        setProcurementError('Authentication failed. Please verify your session.');
       } else if (status === 403) {
         setProcurementError('You do not have permission to perform this analysis.');
       } else if (status === 500) {
@@ -196,7 +195,7 @@ export default function Home() {
     });
   };
 
-  if (isAuthLoading) {
+  if (authState === 'INITIALIZING' || isAuthLoading) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <LoadingState />
@@ -204,7 +203,7 @@ export default function Home() {
     );
   }
 
-  if (!user) {
+  if (authState === 'SIGNED_OUT') {
     return (
       <div className="max-w-md mx-auto px-4 py-20 text-center">
         <div className="bg-surface-container-lowest border border-surface-container-high rounded-DEFAULT p-6 space-y-4 shadow-sm">

@@ -7,7 +7,7 @@ from backend.app.models.responses import (
     SourceVerificationResponse
 )
 from backend.app.models.auth import UserResponse
-from backend.app.api.routes.auth import get_current_user_optional
+from backend.app.api.routes.auth import get_current_user_required
 from backend.app.services.procurement_service import ProcurementService
 from backend.app.services.sourcing_service import SourcingService
 from backend.app.api.dependencies import get_procurement_service, get_sourcing_service
@@ -19,7 +19,7 @@ router = APIRouter()
 def analyze_procurement(
     payload: ProcurementAnalysisRequest,
     service: ProcurementService = Depends(get_procurement_service),
-    current_user: Optional[UserResponse] = Depends(get_current_user_optional)
+    current_user: UserResponse = Depends(get_current_user_required)
 ):
     logger.info(f"[API ROUTE] Procurement analysis requested for company '{payload.company}' ({len(payload.requirements)} items)")
     if not payload.company or not payload.company.strip():
@@ -47,7 +47,8 @@ def analyze_procurement(
                     normalized_metadata={
                         "total_items": len(response.normalized_items),
                         "overall_readiness_score": response.package_evaluation.overall_readiness_score,
-                        "decision_state": response.package_evaluation.decision_summary.decision_state
+                        "decision_state": response.package_evaluation.decision_summary.decision_state,
+                        "ai_provider": response.explanation.ai_provider
                     },
                     status="COMPLETED",
                     items=[

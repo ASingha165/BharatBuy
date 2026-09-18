@@ -31,6 +31,7 @@ class RecommendationResponse(BaseModel):
         default=None,
         description="Grounded technical explanation detailing why these standards match"
     )
+    ai_provider: str = "deterministic_fallback"
 
 class StandardDetailResponse(BaseModel):
     standard_id: str
@@ -76,6 +77,9 @@ class HealthStatusResponse(BaseModel):
     total_standards: int
     gemini_configured: bool
     is_demo_mode: bool = False
+    gemma_configured: bool = False
+    active_fast_provider: str = "gemma"
+    active_reasoning_provider: str = "gemini"
 
 class NormalizedRequirementItem(BaseModel):
     item_name: str
@@ -401,6 +405,7 @@ class GroundedExplanation(BaseModel):
     compliance_caveats: List[str] = []
     missing_information: List[str] = []
     synthesis_type: str = "GROUNDED_DETERMINISTIC_FALLBACK"
+    ai_provider: str = "deterministic_fallback"
 
 class ProcurementAnalysisResponse(BaseModel):
     request_id: str

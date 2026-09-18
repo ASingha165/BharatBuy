@@ -11,7 +11,7 @@ import { Activity, Layers, Cpu, LogOut, LogIn } from 'lucide-react';
 
 export const Header: React.FC = () => {
   const [health, setHealth] = useState<HealthStatus | null>(null);
-  const { user, signOut } = useAuth();
+  const { user, authState, signOut } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -133,7 +133,7 @@ export const Header: React.FC = () => {
 
 
           {/* Authenticated User Identity Area */}
-          {user ? (
+          {authState === 'SIGNED_IN' && user ? (
             <div className="flex items-center space-x-2 bg-white/10 border border-white/10 rounded-DEFAULT px-2.5 py-1.5 text-xs">
               <div className="flex items-center space-x-1.5 min-w-0 max-w-[160px] sm:max-w-[200px]">
                 <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center flex-shrink-0 text-white font-medium text-xs">
@@ -153,6 +153,10 @@ export const Header: React.FC = () => {
               >
                 <LogOut className="w-3.5 h-3.5" />
               </button>
+            </div>
+          ) : authState === 'INITIALIZING' ? (
+            <div className="flex items-center justify-center w-20 h-8">
+              {/* Invisible placeholder to prevent layout shift during initialization */}
             </div>
           ) : (
             <Link

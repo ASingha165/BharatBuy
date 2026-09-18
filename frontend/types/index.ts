@@ -28,6 +28,7 @@ export interface RecommendationResponse {
   results: RecommendationResultItem[];
   explanation?: string;
   gemini_explanation?: string;
+  ai_provider?: string;
 }
 
 export interface StandardDetailResponse {
@@ -89,6 +90,9 @@ export interface HealthStatus {
   total_standards: number;
   gemini_configured?: boolean;
   is_demo_mode?: boolean;
+  gemma_configured?: boolean;
+  active_fast_provider?: string;
+  active_reasoning_provider?: string;
 }
 
 export interface ProcurementRequirementItem {
@@ -381,7 +385,8 @@ export interface GroundedExplanation {
   inference_requires_verification: string[];
   compliance_caveats: string[];
   missing_information: string[];
-  synthesis_type?: 'LIVE_GEMINI_SYNTHESIS' | 'GROUNDED_DETERMINISTIC_FALLBACK' | string;
+  synthesis_type?: 'LIVE_GEMINI_SYNTHESIS' | 'LIVE_GEMMA_SYNTHESIS' | 'GROUNDED_DETERMINISTIC_FALLBACK' | string;
+  ai_provider?: 'gemini' | 'gemma' | 'deterministic_fallback' | string;
 }
 
 export interface ProcurementAnalysisResponse {

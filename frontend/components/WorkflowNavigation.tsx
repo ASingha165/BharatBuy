@@ -129,8 +129,8 @@ export const WorkflowNavigation: React.FC<WorkflowNavigationProps> = ({
             icon = <span className="w-5 h-5 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center text-[11px] font-bold font-mono">7</span>;
             badgeColor = 'text-amber-800 bg-amber-50 border border-amber-200';
           } else if (step.id === 'explanation') {
-            if (synthesisType === 'LIVE_GEMINI_SYNTHESIS') {
-              displayStatus = 'LIVE GEMINI';
+            if (synthesisType === 'LIVE_GEMINI_SYNTHESIS' || synthesisType === 'LIVE_GEMMA_SYNTHESIS') {
+              displayStatus = synthesisType === 'LIVE_GEMMA_SYNTHESIS' ? 'LIVE GEMMA' : 'LIVE GEMINI';
               stepBg = isActive ? 'bg-cyan-50 border-cyan-400' : 'bg-surface-container-low border-transparent hover:bg-surface-container';
               icon = <span className="w-5 h-5 rounded-full bg-cyan-100 text-cyan-800 flex items-center justify-center text-[11px] font-bold font-mono">8</span>;
               badgeColor = 'text-cyan-800 bg-cyan-50 border border-cyan-300 font-semibold';

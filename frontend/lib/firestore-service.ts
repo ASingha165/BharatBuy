@@ -38,6 +38,7 @@ export interface ProcurementHistoryRecord {
   analysis_created_at: string;
   updated_at: string;
   request_status: string;
+  ai_provider?: string;
   request: {
     description?: string;
     requirements: any[];
@@ -232,6 +233,7 @@ export async function recordProcurementHistoryFirestore(
     analysis_created_at: serverTimestamp() as any,
     updated_at: serverTimestamp() as any,
     request_status: 'COMPLETED',
+    ai_provider: response.explanation?.ai_provider || 'deterministic_fallback',
     request: {
       description: request.description,
       requirements: request.requirements || []

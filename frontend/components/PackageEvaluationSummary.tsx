@@ -239,10 +239,10 @@ export const PackageEvaluationSummary: React.FC<PackageEvaluationSummaryProps> =
               Grounded AI Explainability Briefing
             </h3>
           </div>
-          {explanation.synthesis_type === 'LIVE_GEMINI_SYNTHESIS' || (!explanation.summary.includes('Gemini explanation unavailable') && (explanation.summary.includes('SUPPORTED BY EVIDENCE') || explanation.summary.includes('SUPPORTED BY DATABASE'))) ? (
+          {explanation.synthesis_type === 'LIVE_GEMINI_SYNTHESIS' || explanation.synthesis_type === 'LIVE_GEMMA_SYNTHESIS' || (!explanation.summary.includes('Gemini explanation unavailable') && (explanation.summary.includes('SUPPORTED BY EVIDENCE') || explanation.summary.includes('SUPPORTED BY DATABASE'))) ? (
             <span className="font-mono text-[10px] text-cyan-800 bg-cyan-50 border border-cyan-300 px-2 py-0.5 rounded-DEFAULT font-semibold flex items-center gap-1 shadow-sm">
               <Sparkles className="w-3 h-3 text-cyan-600" />
-              <span>LIVE GEMINI SYNTHESIS</span>
+              <span>{explanation.synthesis_type === 'LIVE_GEMMA_SYNTHESIS' ? 'LIVE GEMMA SYNTHESIS' : 'LIVE GEMINI SYNTHESIS'}</span>
             </span>
           ) : (
             <span className="font-mono text-[10px] text-secondary bg-surface-container-high border border-surface-container-highest px-2 py-0.5 rounded-DEFAULT font-semibold">

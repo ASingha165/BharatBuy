@@ -95,5 +95,6 @@ class RecommendationService:
             model=settings.MODEL_TYPE,
             total_found=len(final_items),
             results=final_items,
-            explanation=explanation
+            explanation=explanation,
+            ai_provider=self.explanation_service.last_provider
         )
