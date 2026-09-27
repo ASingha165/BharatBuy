@@ -57,7 +57,16 @@ class DatabaseManager:
         path = self._custom_sqlite_path or settings.DATABASE_PATH
         if not os.path.isabs(path):
             base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-            path = os.path.join(base_dir, path)
+            p1 = os.path.join(base_dir, path)
+            if os.path.exists(p1):
+                return p1
+            backend_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            p2 = os.path.join(backend_dir, path)
+            if os.path.exists(p2):
+                return p2
+            if os.path.exists(path):
+                return os.path.abspath(path)
+            return p1
         return path
 
     def get_sanitized_status(self) -> Dict[str, Any]:
@@ -102,7 +111,7 @@ class DatabaseManager:
             finally:
                 conn.close()
         else:
-            conn = sqlite3.connect(self.sqlite_path)
+            conn = sqlite3.connect(self.sqlite_path, timeout=30.0)
             conn.row_factory = sqlite3.Row
             try:
                 yield conn

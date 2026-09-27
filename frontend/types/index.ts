@@ -89,11 +89,18 @@ export interface HealthStatus {
   model_type?: string;
   total_standards: number;
   gemini_configured?: boolean;
+  gemini_available?: boolean;
   is_demo_mode?: boolean;
   gemma_configured?: boolean;
+  gemma_available?: boolean;
   active_fast_provider?: string;
   active_reasoning_provider?: string;
+  configured_fast_provider?: string;
+  configured_reasoning_provider?: string;
+  firebase_admin_configured?: boolean;
+  firebase_project_id?: string;
 }
+
 
 export interface ProcurementRequirementItem {
   item: string;
@@ -445,3 +452,49 @@ export interface SignInPayload {
   password: string;
   remember_me?: boolean;
 }
+
+// Official Government of India Geospatial Map Provider Types
+export type OfficialMapServiceType = 'WMS' | 'WMTS' | 'XYZ' | 'ARCGIS_REST';
+export type MapAvailabilityState = 'ACTIVE' | 'CREDENTIALS_REQUIRED' | 'UNAVAILABLE' | 'DEVELOPMENT_FALLBACK';
+
+export interface OfficialIndiaMapProvider {
+  name: string;
+  sourceUrl: string;
+  serviceType: OfficialMapServiceType;
+  endpointUrl: string;
+  layerName: string;
+  attribution: string;
+  crs: string;
+  minZoom: number;
+  maxZoom: number;
+  requiresCredentials: boolean;
+  availabilityState: MapAvailabilityState;
+  error?: string | null;
+  statusMessage: string;
+  isOfficialGovSource: boolean;
+}
+
+export type GovernmentMapProvider = OfficialIndiaMapProvider;
+
+// GIS Hybrid / Mixed Map Architecture Types
+export type GisMapMode = 'GOVERNMENT' | 'HYBRID' | 'OPERATIONAL';
+
+export interface GisLayerVisibility {
+  administrativeBoundaries: boolean;
+  districtBoundaries: boolean;
+  roadLogistics: boolean;
+  sourcingRegions: boolean;
+  procurementSources: boolean;
+  liveGps: boolean;
+  routes: boolean;
+}
+
+export interface GisProviderStatus {
+  baseMapProvider: string;
+  baseMapSubtext?: string;
+  isFallback: boolean;
+  officialLayersProvider?: string | null;
+  operationalRoutingProvider?: string | null;
+  procurementIntelligenceProvider: string;
+}
+

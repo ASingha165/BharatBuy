@@ -18,6 +18,7 @@ class StandardsRepository:
             self.manager = DatabaseManager(sqlite_path=db_path)
         else:
             self.manager = db_manager
+        self._standards_cache: Optional[List[Dict[str, Any]]] = None
 
     @property
     def db_path(self) -> str:
@@ -38,6 +39,8 @@ class StandardsRepository:
             return False
 
     def get_total_count(self) -> int:
+        if self._standards_cache is not None:
+            return len(self._standards_cache)
         try:
             res = self.manager.fetch_one("SELECT COUNT(*) AS cnt FROM standards")
             if res:
@@ -49,11 +52,16 @@ class StandardsRepository:
             return 0
 
     def get_all_standards(self) -> List[Dict[str, Any]]:
+        if self._standards_cache is not None:
+            return self._standards_cache
         try:
-            return self.manager.fetch_all("""
+            results = self.manager.fetch_all("""
             SELECT standard_id, is_code, title, department, scope_summary, key_specifications, testing_requirements, status, publication_year
             FROM standards
             """)
+            if results:
+                self._standards_cache = results
+            return results
         except Exception as e:
             logger.error(f"[{self.engine_name.upper()}] Error fetching all standards: {e}")
             return []

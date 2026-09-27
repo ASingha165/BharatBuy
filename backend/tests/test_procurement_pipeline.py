@@ -7,7 +7,10 @@ from backend.app.services.package_evaluation_service import PackageEvaluationSer
 from backend.app.services.sourcing_service import SourcingService
 from backend.app.api.dependencies import hybrid_retrieval_service, procurement_service
 
-client = TestClient(app)
+client = TestClient(
+    app,
+    headers={"Authorization": "Bearer test_mock_token:usr_pipeline:buyer@test.in"}
+)
 
 def test_normalization_service_item():
     norm_svc = NormalizationService()

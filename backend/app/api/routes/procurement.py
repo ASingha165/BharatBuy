@@ -1,6 +1,6 @@
 from typing import Optional, List, Dict, Any
 from fastapi import APIRouter, HTTPException, Depends, Query
-from backend.app.models.requests import ProcurementAnalysisRequest, ManualVerifyRequest
+from backend.app.models.requests import ProcurementAnalysisRequest, ManualVerifyRequest, SaveHistoryRequest
 from backend.app.models.responses import (
     ProcurementAnalysisResponse,
     SourceEvidenceResponse,
@@ -11,6 +11,7 @@ from backend.app.api.routes.auth import get_current_user_required
 from backend.app.services.procurement_service import ProcurementService
 from backend.app.services.sourcing_service import SourcingService
 from backend.app.api.dependencies import get_procurement_service, get_sourcing_service
+from backend.app.repositories.history_repository import history_repository, ProductionPersistenceError
 from backend.app.core.logging import logger
 
 router = APIRouter()
@@ -150,4 +151,83 @@ def verify_source(
     if not verif:
         raise HTTPException(status_code=404, detail=f"Sourcing entity '{source_id}' not found in registry.")
     return verif
+
+
+@router.post("/history")
+def save_procurement_history(
+    payload: SaveHistoryRequest,
+    current_user: UserResponse = Depends(get_current_user_required)
+):
+    """
+    Saves an authenticated user's procurement analysis snapshot to the history store.
+    Guarantees user isolation: record is strictly tied to verified user ID / Firebase UID.
+    """
+    logger.info(f"[API ROUTE] Saving procurement history '{payload.procurement_id}' for user '{current_user.id}'")
+    record_dict = payload.model_dump() if hasattr(payload, "model_dump") else payload.dict()
+    try:
+        saved = history_repository.save_snapshot(
+            user_id=current_user.id,
+            firebase_uid=getattr(current_user, "firebase_uid", None) or current_user.id,
+            record=record_dict
+        )
+        if not saved:
+            raise HTTPException(status_code=500, detail="Failed to persist procurement history.")
+        return {"success": True, "procurement_id": payload.procurement_id}
+    except ProductionPersistenceError as ppe:
+        logger.error(f"[API ROUTE] History persistence error: {ppe}")
+        raise HTTPException(
+            status_code=503,
+            detail=f"History persistence unavailable in production: {str(ppe)}"
+        )
+
+
+@router.get("/history", response_model=List[Dict[str, Any]])
+def list_procurement_history(
+    current_user: UserResponse = Depends(get_current_user_required)
+):
+    """
+    Retrieves all saved procurement analysis snapshots for the authenticated user.
+    Enforces strict ownership isolation.
+    """
+    logger.info(f"[API ROUTE] Listing procurement history for user '{current_user.id}'")
+    try:
+        records = history_repository.list_snapshots(
+            user_id=current_user.id,
+            firebase_uid=getattr(current_user, "firebase_uid", None) or current_user.id
+        )
+        return records
+    except ProductionPersistenceError as ppe:
+        logger.error(f"[API ROUTE] History retrieval error: {ppe}")
+        raise HTTPException(
+            status_code=503,
+            detail=f"History persistence unavailable in production: {str(ppe)}"
+        )
+
+
+@router.delete("/history/{procurement_id}")
+def delete_procurement_history(
+    procurement_id: str,
+    current_user: UserResponse = Depends(get_current_user_required)
+):
+    """
+    Deletes a user's procurement analysis snapshot.
+    Enforces ownership verification: cannot delete other users' records.
+    """
+    logger.info(f"[API ROUTE] Deleting procurement history '{procurement_id}' for user '{current_user.id}'")
+    try:
+        deleted = history_repository.delete_snapshot(
+            procurement_id=procurement_id,
+            user_id=current_user.id,
+            firebase_uid=getattr(current_user, "firebase_uid", None) or current_user.id
+        )
+        if not deleted:
+            raise HTTPException(status_code=404, detail="Procurement history record not found or unauthorized.")
+        return {"success": True, "deleted_id": procurement_id}
+    except ProductionPersistenceError as ppe:
+        logger.error(f"[API ROUTE] History deletion error: {ppe}")
+        raise HTTPException(
+            status_code=503,
+            detail=f"History persistence unavailable in production: {str(ppe)}"
+        )
+
 

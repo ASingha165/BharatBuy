@@ -19,7 +19,10 @@ from backend.app.services.evidence_service import EvidenceService
 from backend.app.services.gstin_verification_service import GSTINVerificationService
 
 # Path to the authoritative sourcing registry dataset
-DATA_DIR = Path(__file__).resolve().parent.parent.parent.parent / "data"
+# Supports both repository root (local dev) and backend/ service root (Vercel deployment)
+_REPO_DATA_DIR = Path(__file__).resolve().parent.parent.parent.parent / "data"
+_BACKEND_DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data"
+DATA_DIR = _REPO_DATA_DIR if (_REPO_DATA_DIR / "sourcing-registry-v1.json").exists() else _BACKEND_DATA_DIR
 SOURCING_REGISTRY_PATH = DATA_DIR / "sourcing-registry-v1.json"
 
 DEFAULT_SCORING_WEIGHTS = {

@@ -27,10 +27,16 @@ wheels/
 *.egg
 .pytest_cache/
 .coverage
+coverage/
 htmlcov/
 .venv/
+.venv_clean/
+backend/.venv/
+backend/.venv_clean/
 venv/
 ENV/
+.mypy_cache/
+.ruff_cache/
 
 # Node / Next.js
 node_modules/

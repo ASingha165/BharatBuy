@@ -15,7 +15,7 @@ import {
   SignInPayload
 } from '../types';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api/v1';
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -38,6 +38,10 @@ export const setAuthToken = (token: string | null) => {
 // Ensures fresh, valid Firebase ID tokens are attached to outgoing API requests
 apiClient.interceptors.request.use(
   async (config) => {
+    // Health check is public — never block on token refresh
+    if (config.url === '/health' || config.url?.endsWith('/health')) {
+      return config;
+    }
     if (typeof window !== 'undefined') {
       try {
         const { getFirebaseAuth } = await import('./firebase');
@@ -45,8 +49,14 @@ apiClient.interceptors.request.use(
         if (fbAuth && fbAuth.currentUser) {
           const freshToken = await fbAuth.currentUser.getIdToken();
           if (freshToken && typeof freshToken === 'string' && freshToken.trim().length > 0) {
-            config.headers = config.headers || {};
-            config.headers['Authorization'] = `Bearer ${freshToken.trim()}`;
+            setAuthToken(freshToken);
+            if (config.headers) {
+              if (typeof (config.headers as any).set === 'function') {
+                (config.headers as any).set('Authorization', `Bearer ${freshToken.trim()}`);
+              } else {
+                config.headers['Authorization'] = `Bearer ${freshToken.trim()}`;
+              }
+            }
           }
         }
       } catch (err) {
@@ -58,12 +68,12 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor to handle 401s and retry once
+// Response interceptor to handle 401s and retry exactly once
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
       originalRequest._retry = true;
       if (typeof window !== 'undefined') {
         try {
@@ -73,7 +83,13 @@ apiClient.interceptors.response.use(
             const freshToken = await fbAuth.currentUser.getIdToken(true); // force refresh
             if (freshToken) {
               setAuthToken(freshToken);
-              originalRequest.headers['Authorization'] = `Bearer ${freshToken.trim()}`;
+              if (originalRequest.headers) {
+                if (typeof (originalRequest.headers as any).set === 'function') {
+                  (originalRequest.headers as any).set('Authorization', `Bearer ${freshToken.trim()}`);
+                } else {
+                  originalRequest.headers['Authorization'] = `Bearer ${freshToken.trim()}`;
+                }
+              }
               return apiClient(originalRequest);
             }
           }
@@ -224,3 +240,50 @@ export const syncFirebaseProfileApi = async (
   const response = await apiClient.post<AuthResponse>('/auth/firebase-sync', payload, { headers });
   return response.data;
 };
+
+// Procurement History APIs
+export const saveProcurementHistoryApi = async (
+  record: any,
+  token?: string | null
+): Promise<{ success: boolean; procurement_id: string }> => {
+  const headers: Record<string, string> = {};
+  if (token && typeof token === 'string' && token.trim().length > 0) {
+    headers['Authorization'] = `Bearer ${token.trim()}`;
+  }
+  const response = await apiClient.post<{ success: boolean; procurement_id: string }>(
+    '/procurement/history',
+    record,
+    { headers, timeout: 8000 }
+  );
+  return response.data;
+};
+
+export const listProcurementHistoryApi = async (
+  token?: string | null
+): Promise<any[]> => {
+  const headers: Record<string, string> = {};
+  if (token && typeof token === 'string' && token.trim().length > 0) {
+    headers['Authorization'] = `Bearer ${token.trim()}`;
+  }
+  const response = await apiClient.get<any[]>(
+    '/procurement/history',
+    { headers, timeout: 8000 }
+  );
+  return response.data;
+};
+
+export const deleteProcurementHistoryApi = async (
+  procurementId: string,
+  token?: string | null
+): Promise<{ success: boolean; deleted_id: string }> => {
+  const headers: Record<string, string> = {};
+  if (token && typeof token === 'string' && token.trim().length > 0) {
+    headers['Authorization'] = `Bearer ${token.trim()}`;
+  }
+  const response = await apiClient.delete<{ success: boolean; deleted_id: string }>(
+    `/procurement/history/${procurementId}`,
+    { headers, timeout: 8000 }
+  );
+  return response.data;
+};
+

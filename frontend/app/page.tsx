@@ -120,7 +120,11 @@ export default function Home() {
       // Persist procurement request in Cloud Firestore for authenticated user
       if (user && res.request_id) {
         void recordProcurementHistoryFirestore({ uid: user.id }, request, res).then((saved) => {
-          if (!saved) setHistoricalNotice('Procurement analysis completed, but history could not be saved.');
+          if (!saved) {
+            setHistoricalNotice('Procurement analysis completed, but history could not be saved.');
+          } else {
+            setHistoricalNotice(null);
+          }
         });
         void import('../lib/firestore-service').then(({ recordProcurementRequestFirestore }) =>
           recordProcurementRequestFirestore(
@@ -197,8 +201,13 @@ export default function Home() {
 
   if (authState === 'INITIALIZING' || isAuthLoading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <LoadingState />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+        <div className="inline-flex items-center space-x-3 bg-surface-container-lowest border border-surface-container-high rounded-DEFAULT px-6 py-4 shadow-sm">
+          <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+          <span className="text-xs font-mono font-medium text-secondary">
+            Initializing BharatBuy Procurement Workbench...
+          </span>
+        </div>
       </div>
     );
   }

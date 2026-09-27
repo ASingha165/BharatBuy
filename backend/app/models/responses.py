@@ -76,10 +76,17 @@ class HealthStatusResponse(BaseModel):
     model_type: str
     total_standards: int
     gemini_configured: bool
+    gemini_available: bool = False
     is_demo_mode: bool = False
     gemma_configured: bool = False
-    active_fast_provider: str = "gemma"
-    active_reasoning_provider: str = "gemini"
+    gemma_available: bool = False
+    active_fast_provider: str = "deterministic_fallback"
+    active_reasoning_provider: str = "deterministic_fallback"
+    configured_fast_provider: str = "gemma"
+    configured_reasoning_provider: str = "gemini"
+    firebase_admin_configured: bool = False
+    firebase_project_id: str = "bharatbuy-d4b11"
+
 
 class NormalizedRequirementItem(BaseModel):
     item_name: str

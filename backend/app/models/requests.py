@@ -1,5 +1,5 @@
 from typing import Optional, List
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class RecommendationRequest(BaseModel):
@@ -51,3 +51,20 @@ class ManualVerifyRequest(BaseModel):
     verified_by: str = Field(..., description="Email or identifier of buyer/engineer performing verification")
     checklist_confirmed: dict[str, bool] = Field(default_factory=dict, description="Confirmations for required checklist items")
     notes: Optional[str] = None
+
+
+class SaveHistoryRequest(BaseModel):
+    model_config = ConfigDict(extra="allow")
+    procurement_id: str = Field(..., min_length=1, description="Procurement request ID")
+    company_name: str = Field(default="Enterprise Buyer", description="Buyer / Enterprise name")
+    request_status: str = Field(default="COMPLETED", description="Execution status")
+    ai_provider: Optional[str] = "deterministic_fallback"
+    request: dict = Field(default_factory=dict, description="Original request parameters")
+    items: list[dict] = Field(default_factory=list, description="Evaluated items")
+    budget: dict = Field(default_factory=dict, description="Budget parameters")
+    location: dict = Field(default_factory=dict, description="Location metadata")
+    search: dict = Field(default_factory=dict, description="Search parameters")
+    sourcing: dict = Field(default_factory=dict, description="Sourcing summary")
+    analysis: dict = Field(default_factory=dict, description="Analysis snapshot")
+    analysis_created_at: Optional[str] = None
+

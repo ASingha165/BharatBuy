@@ -86,3 +86,46 @@ body {
 .leaflet-control-attribution a:hover {
   text-decoration: underline;
 }
+
+/* Compact Non-Intrusive GIS & Procurement Tooltips */
+.leaflet-tooltip {
+  background: rgba(15, 23, 42, 0.94) !important;
+  color: #f8fafc !important;
+  border: 1px solid rgba(148, 163, 184, 0.3) !important;
+  border-radius: 4px !important;
+  padding: 3px 6px !important;
+  font-size: 10px !important;
+  box-shadow: 0 4px 10px -2px rgba(0, 0, 0, 0.4) !important;
+  pointer-events: none !important;
+  white-space: nowrap !important;
+}
+
+/* Distinct compact styles for GIS vs Source markers */
+.compact-gis-tooltip {
+  background: rgba(15, 23, 42, 0.88) !important;
+  border: 1px solid rgba(100, 116, 139, 0.35) !important;
+  font-size: 9px !important;
+  padding: 2px 5px !important;
+}
+
+.compact-source-tooltip {
+  background: rgba(15, 23, 42, 0.96) !important;
+  border: 1px solid rgba(56, 189, 248, 0.45) !important;
+  box-shadow: 0 6px 14px -2px rgba(0, 0, 0, 0.6) !important;
+  z-index: 1000 !important;
+}
+
+.leaflet-tooltip-top:before {
+  border-top-color: #334155 !important;
+}
+.leaflet-tooltip-bottom:before {
+  border-bottom-color: #334155 !important;
+}
+.leaflet-tooltip-left:before {
+  border-left-color: #334155 !important;
+}
+.leaflet-tooltip-right:before {
+  border-right-color: #334155 !important;
+}
+
+

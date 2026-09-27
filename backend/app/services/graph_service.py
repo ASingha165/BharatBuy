@@ -10,7 +10,17 @@ class GraphService:
         self.graph_path = graph_path or settings.GRAPH_PATH
         if not os.path.isabs(self.graph_path):
             base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-            self.graph_path = os.path.join(base_dir, self.graph_path)
+            p1 = os.path.join(base_dir, self.graph_path)
+            backend_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            p2 = os.path.join(backend_dir, self.graph_path)
+            if os.path.exists(p1):
+                self.graph_path = p1
+            elif os.path.exists(p2):
+                self.graph_path = p2
+            elif os.path.exists(self.graph_path):
+                self.graph_path = os.path.abspath(self.graph_path)
+            else:
+                self.graph_path = p1
             
         self.nodes_map: Dict[str, Dict[str, Any]] = {}
         self.edges: List[Dict[str, Any]] = []

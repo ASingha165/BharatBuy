@@ -61,7 +61,7 @@ class UserRepository:
                     """)
                     conn.commit()
                 else:
-                    # SQLite: strictly preserve existing schema, only create if table doesn't exist
+                    # SQLite: ensure firebase_uid exists
                     cursor.execute("""
                     CREATE TABLE IF NOT EXISTS users (
                         id TEXT PRIMARY KEY,
@@ -73,6 +73,11 @@ class UserRepository:
                         updated_at TEXT NOT NULL
                     )
                     """)
+                    try:
+                        cursor.execute("ALTER TABLE users ADD COLUMN firebase_uid TEXT")
+                        conn.commit()
+                    except Exception:
+                        pass
                     cursor.execute("""
                     CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)
                     """)

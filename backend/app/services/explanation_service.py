@@ -86,6 +86,9 @@ def _call_gemma_sdk(api_key: str, model: str, prompt: str, timeout: float) -> st
     return text.strip()
 
 
+_DEFAULT_SENTINEL = object()
+
+
 class ExplanationService:
     """
     Builds grounded procurement explanations with optional Gemini AI enrichment.
@@ -94,23 +97,27 @@ class ExplanationService:
     GroundedExplanation object regardless of Gemini availability.
     """
 
-    def __init__(self, gemini_api_key: Any = None, gemma_api_key: Any = None):
-        # Accept None or a sentinel object for testing
-        if gemini_api_key is None or isinstance(gemini_api_key, str):
-            self.api_key = gemini_api_key if isinstance(gemini_api_key, str) else settings.GEMINI_API_KEY
+    def __init__(self, gemini_api_key: Any = _DEFAULT_SENTINEL, gemma_api_key: Any = _DEFAULT_SENTINEL):
+        # Explicit None or empty string disables Gemini; omitting the parameter uses settings
+        if gemini_api_key is _DEFAULT_SENTINEL:
+            self.api_key = (settings.GEMINI_API_KEY or "").strip()
+        elif isinstance(gemini_api_key, str):
+            self.api_key = gemini_api_key.strip()
         else:
-            # Sentinel object passed from legacy constructor call
-            self.api_key = settings.GEMINI_API_KEY
+            self.api_key = ""
 
-        self.api_key = (self.api_key or "").strip()
-        self.gemma_api_key = (
-            gemma_api_key if isinstance(gemma_api_key, str) else settings.GEMMA_API_KEY
-        )
-        self.gemma_api_key = (self.gemma_api_key or "").strip()
+        if gemma_api_key is _DEFAULT_SENTINEL:
+            self.gemma_api_key = (settings.GEMMA_API_KEY or "").strip()
+        elif isinstance(gemma_api_key, str):
+            self.gemma_api_key = gemma_api_key.strip()
+        else:
+            self.gemma_api_key = ""
+
         self._sdk_available = False
         self._gemma_sdk_available = False
         self.active_model_name: Optional[str] = None
         self.last_provider = "deterministic_fallback"
+        self._runtime_gemini_available: Optional[bool] = None
 
         if self.api_key or self.gemma_api_key:
             try:
@@ -121,12 +128,15 @@ class ExplanationService:
             except ImportError:
                 logger.warning("[ExplanationService] google.genai not installed. AI providers disabled.")
 
+        # client attribute can be set to None by tests/callers to simulate Gemini unavailable
+        self.client = True if (self.api_key and self._sdk_available) else None
+
         self.gemini_provider = GeminiProvider(
-            api_key=self.api_key,
+            api_key=self.api_key if self.client is not None else "",
             model=GEMINI_MODEL_CANDIDATES[0],
             timeout_seconds=settings.GEMINI_REQUEST_TIMEOUT_SECONDS,
             call_fn=_call_gemini_sdk,
-            sdk_available=self._sdk_available,
+            sdk_available=bool(self._sdk_available and self.client is not None),
         )
         self.gemma_provider = GemmaProvider(
             api_key=self.gemma_api_key,
@@ -138,16 +148,27 @@ class ExplanationService:
 
     @property
     def gemini_configured(self) -> bool:
+        if getattr(self, "client", True) is None:
+            return False
         return bool(self.api_key and self._sdk_available)
 
     @property
     def gemma_configured(self) -> bool:
         return bool(self.gemma_api_key and self._gemma_sdk_available and settings.GEMMA_MODEL)
 
+    @property
+    def gemini_available(self) -> bool:
+        if not self.gemini_configured:
+            return False
+        if self._runtime_gemini_available is False:
+            return False
+        return True
+
     def _sync_provider_state(self) -> None:
         # Tests and runtime configuration can update availability after construction.
-        self.gemini_provider.api_key = self.api_key
-        self.gemini_provider._sdk_available = self._sdk_available
+        client_active = getattr(self, "client", True) is not None
+        self.gemini_provider.api_key = self.api_key if client_active else ""
+        self.gemini_provider._sdk_available = bool(self._sdk_available and client_active)
         self.gemma_provider.api_key = self.gemma_api_key
         self.gemma_provider._sdk_available = self._gemma_sdk_available
 
@@ -165,7 +186,7 @@ class ExplanationService:
 
         Returns the generated text string, or None if all candidates fail or timeout.
         """
-        if not self.api_key or not self._sdk_available:
+        if not self.api_key or not self._sdk_available or getattr(self, "client", True) is None:
             return None
 
         remaining_budget = GEMINI_HARD_TIMEOUT_SECONDS
@@ -195,6 +216,7 @@ class ExplanationService:
                 elapsed = time.monotonic() - t_start
                 self.active_model_name = candidate
                 self.last_provider = "gemini"
+                self._runtime_gemini_available = True
                 logger.info(f"[ExplanationService] Gemini '{candidate}' succeeded in {elapsed:.2f}s.")
                 executor.shutdown(wait=False)
                 return text
@@ -212,10 +234,12 @@ class ExplanationService:
                 err_msg = str(exc)[:160]
                 executor.shutdown(wait=False)
                 if "429" in err_msg or "RESOURCE_EXHAUSTED" in err_msg or "quota" in err_msg.lower():
-                    # Quota exceeded — log and skip; do NOT wait for the retryDelay
+                    # Quota exceeded for project — set unavailable and immediately fallback (do not waste time on other candidates)
+                    self._runtime_gemini_available = False
                     logger.warning(
-                        f"[ExplanationService] Gemini '{candidate}' quota exceeded ({elapsed:.2f}s) — skipping."
+                        f"[ExplanationService] Gemini '{candidate}' quota exceeded ({elapsed:.2f}s) — immediately using deterministic fallback."
                     )
+                    break
                 elif "404" in err_msg or "NOT_FOUND" in err_msg:
                     logger.warning(
                         f"[ExplanationService] Gemini '{candidate}' model not found ({elapsed:.2f}s) — skipping."
@@ -227,6 +251,7 @@ class ExplanationService:
 
             remaining_budget -= (time.monotonic() - t_start)
 
+        self._runtime_gemini_available = False
         logger.info("[ExplanationService] All Gemini candidates exhausted — using deterministic fallback.")
         return None
 

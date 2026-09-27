@@ -15,7 +15,10 @@ from backend.app.models.responses import (
     NormalizedRequirementItem
 )
 
-client = TestClient(app)
+client = TestClient(
+    app,
+    headers={"Authorization": "Bearer test_mock_token:usr_phase5:buyer@test.in"}
+)
 
 # 1. Demo Mode Disabled by Default (Production Integrity)
 def test_demo_mode_disabled_by_default():

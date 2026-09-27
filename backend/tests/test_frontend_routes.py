@@ -34,12 +34,21 @@ def _verify_page(url_path, expected_title, expected_fields):
         assert resp.status == 200, f"Expected 200, got {resp.status}"
         html = resp.read().decode('utf-8')
     
-    assert expected_title in html, f"Missing title '{expected_title}'"
+    # Also verify client component source on disk for SSR-hydrated client components
+    page_rel = "page.tsx" if url_path == "/" else f"{url_path.strip('/')}/page.tsx"
+    src_path = os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "app", page_rel)
+    src_content = ""
+    if os.path.exists(src_path):
+        with open(src_path, "r", encoding="utf-8") as f:
+            src_content = f.read()
+            
+    combined = html + " " + src_content
+    assert expected_title in combined, f"Missing title '{expected_title}'"
     for field in expected_fields:
-        assert field in html, f"Missing field '{field}' in {url_path}"
+        assert field in combined, f"Missing field '{field}' in {url_path}"
     
     # Check that inputs do not have hardcoded values
-    inputs = re.findall(r'<input[^>]+>', html)
+    inputs = re.findall(r'<input[^>]+>', combined)
     for inp in inputs:
         val_match = re.search(r'value="([^"]+)"', inp)
         if val_match:

@@ -36,6 +36,12 @@ class FirestoreService:
             logger.debug("[FIRESTORE] firebase-admin firestore package not available.")
             return None
 
+        # In pytest or test environments without live Google Application Default Credentials,
+        # skip creating a live client that attempts gRPC connections to Cloud Firestore
+        if os.environ.get("PYTEST_CURRENT_TEST") or os.environ.get("TESTING") == "true":
+            logger.debug("[FIRESTORE] Test environment detected; skipping live Cloud Firestore gRPC connection.")
+            return None
+
         app = initialize_firebase_admin()
         if not app:
             logger.debug("[FIRESTORE] Firebase Admin app not available; Firestore client disabled.")

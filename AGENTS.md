@@ -198,23 +198,27 @@ Returns system status:
 
 ## 7. Execution Commands
 
-### Terminal 1 — Backend API Server
+### Canonical Unified Startup (Recommended)
 ```powershell
-cd backend
-python -m uvicorn app.main:app --port 8000 --reload
+# From repository root:
+npm run dev
 ```
+Starts both Next.js frontend (`http://localhost:3000`) and FastAPI backend (`http://localhost:8000`) with pre-flight port conflict checks, startup health verification against `/api/v1/health`, and graceful shutdown (`Ctrl+C` cleanly terminates both processes).
 
-### Terminal 2 — Frontend App
+### Individual Service Execution (Optional)
 ```powershell
-cd frontend
-npm run dev
-# OR from root:
-npm run dev
+# Backend API Server only
+npm run dev:backend
+# OR:
+backend\.venv_clean\Scripts\python.exe -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
+
+# Frontend Next.js only
+npm run dev:frontend
 ```
 
 ### Automated Tests
 ```powershell
-python -m pytest backend/tests/
+backend\.venv_clean\Scripts\python.exe -m pytest backend/tests/
 ```
 
 ---
@@ -500,6 +504,79 @@ python -m pytest backend/tests/
   - Dual-engine parity verified: **100% PARITY between Neon PostgreSQL and SQLite fallback**.
   - Frontend production build: **PASS** (`npm run build` succeeded with 0 errors across all 6 static routes).
 - **Status**: `GOOGLE_AUTH_FIRESTORE_MAP_COMPLETE`.
+
+### 2026-09-19 (Phase 13: Complete Local Project Optimization & Footprint Reduction)
+- **Problem Resolution**: Resolved diagnostic build failure `Total bundle size (5622.28 MB) exceeds the maximum allowed size` from prior Vercel serverless deployment attempt.
+- **Root Cause Eliminated**: Heavy deep-learning frameworks (`torch>=2.2.0`, `sentence-transformers>=2.5.0`) pulling ~5.2 GB of NVIDIA CUDA 12 packages were decoupled into an optional accelerator profile (`backend/requirements-ml.txt`).
+- **Lean Production Environment (`.venv_clean`)**: Created clean virtual environment containing only essential web framework, Pydantic, Rank-BM25, Scikit-Learn, Google GenAI, HTTPX, and Firebase Admin. Runtime footprint reduced by **94.0%** (from 5,622.28 MB down to **338.55 MB**).
+- **Backend Deployment Source Footprint**: **1.02 MB** across 103 files (`build/lean-backend-artifact/`), strictly protecting active SQLite standards database (`data/standards-database-v5.db`, 559 standards), knowledge graph, and sourcing registry.
+- **Automated QA Verification**: Executed complete 186-item backend test suite on `.venv_clean` — **186/186 passed (100%)** with zero regressions in 8m 52s.
+- **Live Local Server**: FastAPI successfully launched on port 8000 using `.venv_clean` in **<3 seconds**, consuming only **~164 MB** RSS memory.
+- **Health Check & End-to-End API Verified**: `GET /api/v1/health` verified healthy (559 standards). `POST /api/v1/procurement/analyze` verified returning HTTP 200 with primary IS standards (IS 694), related standards (IS 10810, IS 732), and sourcing recommendations.
+- **Comprehensive Documentation**: Authored [`docs/PROJECT_OPTIMIZATION_REPORT.md`](file:///d:/BharatBuy/docs/PROJECT_OPTIMIZATION_REPORT.md) detailing architecture, before/after metrics, memory profiles, and cloud deployment recommendations.
+- **Status**: `LOCAL_OPTIMIZATION_COMPLETE_AND_VERIFIED`.
+
+### 2026-09-27 (Phase 14: Unified Local Development Startup & Reliability Hardening)
+### 2026-09-27 (Phase 15: Hybrid / Mixed GIS Map Architecture)
+- **Problem Statement**: Sourcing intelligence map was dominated by standard OpenStreetMap tiles, resembling a generic consumer map rather than an India-focused procurement intelligence GIS platform.
+- **Layered GIS Architecture Implemented**:
+  - **Layer 1 (Official Government Context)**: Integrated NIC Bharat Maps / National Portal of Map Services abstraction configured via `NEXT_PUBLIC_GOV_MAP_URL`, `NEXT_PUBLIC_GOV_MAP_LAYER`, and `NEXT_PUBLIC_MAP_PROVIDER`. Bundled authentic Survey of India aligned national border and state boundaries vector layer (`frontend/lib/india-admin-gis.ts`) with interactive district centroids.
+  - **Layer 2 (ISRO / NRSC Context)**: Built presets for Bhuvan/NRSC-ISRO WMS/WMTS services with zero invented URLs.
+  - **Layer 3 (Operational Road / Logistics Context)**: Embedded key national freight corridors (NH-48, NH-19, NH-16, NH-44, NH-53) and driving routing via OSRM, clearly attributed to OpenStreetMap / OSRM and never falsely labeled as Government of India data.
+  - **Layer 4 (BharatBuy Procurement Intelligence Overlay)**: Maintained full procurement intelligence layer hierarchy:
+    - `SOURCING_REGION`: 25km cluster radius zones (`#3b82f6` dashed border) with corridor disclaimer ("Representative corridor center — not a specific factory gate").
+    - `SOURCE`: Audited manufacturers and suppliers with verification badges (Emerald `#10b981`, Amber `#f59e0b`, Rose `#f43f5e`), CML licenses, and NABL scope.
+    - `BUYER LOCATION`: On-demand live GPS with accuracy circle and zero background tracking.
+    - `ROUTE / DIRECTIONS`: Operational driving directions polyline with metrics.
+- **Map Modes & Controls**:
+  - Built compact top-right GIS layer control popover supporting 3 modes:
+    1. `GOVERNMENT`: Official Gov.in geographic & administrative context + procurement markers.
+    2. `HYBRID` (Default): Gov.in administrative context + operational road logistics + BharatBuy procurement matrix.
+    3. `OPERATIONAL`: Practical road transit & routing + BharatBuy procurement intelligence.
+  - Layer toggles dynamically enable/disable Leaflet LayerGroups without resetting or destroying markers.
+- **Honest Attribution & Provider HUD**:
+  - Implemented compact bottom-left HUD strictly displaying providers actually being rendered.
+  - Development fallback (`NEXT_PUBLIC_ENABLE_MAP_FALLBACK=true` in dev, `false` production default) is explicitly labeled: `"Development fallback — OpenStreetMap (Government map service not configured)"`.
+  - OpenStreetMap is NEVER labeled as a Government of India map.
+- **Backend Secure Proxy Layer**:
+  - Added `GET /api/v1/gis/status` and `GET /api/v1/gis/proxy` (`backend/app/api/routes/gis.py`) allowing server-side authenticated proxying for authorized NIC Bharat Maps credentials without exposing secrets to client-side JavaScript.
+- **Automated QA & Build Validation**:
+  - Created `backend/tests/test_gis_hybrid_map.py` verifying all 12 validation requirements — **12/12 passed (100%)**.
+  - All existing map tests in `backend/tests/test_official_india_map_provider.py` (14/14 passed) and `backend/tests/test_firebase_firestore_and_map.py` (13/13 passed) verified with zero regressions.
+  - ESLint: **PASS** (`npm --prefix frontend run lint` — 0 errors/warnings).
+  - Next.js 14 production build: **PASS** (`npm --prefix frontend run build` — 0 errors across all routes).
+- **Status**: `HYBRID_GIS_MAP_COMPLETE_AND_VERIFIED`.
+
+### 2026-09-27 (Phase 16: Final Hybrid GIS Cleanup & Provenance Hardening)
+- **Reduced Visual Clutter & Configured Strict GIS Pane Hierarchy**:
+  - Re-ordered custom Leaflet map panes and styling to enforce strict visual dominance:
+    1. `buyerGpsPane` (zIndex 600, marker zIndexOffset: 3000) — Strong Buyer GPS (18px circle, cyan #0284c7 with 2.5px white border, glowing shadow, 34px pulsating ring).
+    2. `procurementSourcesPane` (zIndex 520, marker zIndexOffset: 1500 - 2500, +500 if selected) — Strongest Procurement Markers with high-contrast 2px solid white border and drop shadow.
+    3. `sourcingRegionsPane` (zIndex 460, marker zIndexOffset: 1000) — Strong but translucent 25km corridor circles (color: #2563eb, weight 1.3, dashArray: '4, 6', fillOpacity: 0.08).
+    4. `routeDirectionsPane` (zIndex 430) — Strong OSRM route line under markers (weight 4, opacity 0.85).
+    5. `roadLogisticsPane` (zIndex 370) — Moderate freight spine (color: #0284c7, weight 1.5, opacity 0.38, dashArray: '4, 6', interactive hover weight 2.2 / opacity 0.70, cursor-following sticky tooltip).
+    6. `adminBoundariesPane` (zIndex 340) — Subtle administrative reference lines (national weight 1.2, opacity 0.35, no fill; state weight 0.7, opacity 0.20, dashArray: '2, 4', no fill).
+    7. `districtBoundariesPane` (zIndex 320) — Very subtle reference dots (radius 2, weight 0.8, opacity 0.25, direction 'bottom' to strictly eliminate collision with top-oriented source tooltips).
+    8. Basemap tile pane (zIndex 200) — Background context.
+- **Fixed Label Overlap**:
+  - Attached `direction: 'bottom', offset: [0, 4]` to district markers and `direction: 'top', offset: [0, -14]` to procurement source markers, completely preventing overlap when a source is located in a referenced district.
+  - Enabled `sticky: true` on polygon and line layers so tooltips dynamically follow the cursor position instead of fixing permanently to polyline centroids across India.
+  - Added specialized `.compact-gis-tooltip` (font-size 9px, padding 2px 5px, subtle slate border) and `.compact-source-tooltip` (font-size 10px, bold white text, sky brand border) in `globals.css`.
+- **Accurate Provenance Audited & Enforced**:
+  - Removed misleading references to Survey of India (SoI) / NIC / ISRO on locally packaged static GIS datasets in `map-config.ts` and `india-admin-gis.ts`.
+  - Accurately labeled local reference boundaries as: `"Administrative context — BharatBuy static GIS dataset"`.
+  - Preserved official government presets and attributions (`NIC Bharat Maps`, `Survey of India`, `ISRO Bhuvan`) strictly for when authorized government endpoints with credentials are provisioned.
+- **Honest Government Map Status Retained**:
+  - Confirmed: `BASE MAP: Government map service not configured`, `DEVELOPMENT FALLBACK: OpenStreetMap`, and `Map Provider Notice: Development fallback — OpenStreetMap`.
+- **Tactical & Layer Legend**:
+  - Preserved existing verification status legend: *Buyer Verified (Live)*, *Requires Live Verification*, *Region Only*, *Unverified*.
+  - Added concise layer legend strip below the map: `ADMIN`, `LOGISTICS`, `REGION`, `SOURCE`, `BUYER`, `ROUTE` without covering any map area.
+- **Automated QA & Build Validation**:
+  - `backend/tests/test_gis_hybrid_map.py` (12/12 passed) and `backend/tests/test_official_india_map_provider.py` (14/14 passed) — 26/26 passed. Total test suite: **221/221 passed**.
+  - ESLint: **PASS** (`npm --prefix frontend run lint` — 0 errors/warnings).
+  - Next.js 14 production build: **PASS** (`npm --prefix frontend run build` — 0 errors across all routes).
+- **Status**: `FINAL_HYBRID_GIS_CLEANUP_COMPLETE`.
+
 
 
 

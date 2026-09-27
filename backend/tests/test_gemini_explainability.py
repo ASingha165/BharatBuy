@@ -270,6 +270,7 @@ def test_gemini_key_never_returned_in_api_responses():
             "company": "Secure Buyer Ltd",
             "description": "Procurement of 1.1 kV XLPE insulated electrical cables",
         },
+        headers={"Authorization": "Bearer test_mock_token:usr_gemini_test:buyer@enterprise.in"}
     )
     assert analyze_resp.status_code == 200
     res_str = analyze_resp.text

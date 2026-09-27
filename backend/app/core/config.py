@@ -34,6 +34,20 @@ class Settings(BaseSettings):
     # Phase 5: Demo Mode & Data Hardening
     BHARATBUY_DEMO_MODE: bool = False
 
+    # Environment Mode
+    ENVIRONMENT: str = "development"
+
+    @property
+    def is_production(self) -> bool:
+        env = (os.getenv("ENVIRONMENT") or os.getenv("VERCEL_ENV") or self.ENVIRONMENT or "development").strip().lower()
+        is_vercel = os.getenv("VERCEL") == "1"
+        is_node_prod = (os.getenv("NODE_ENV") or "").strip().lower() == "production"
+        return is_vercel or env in ("production", "prod") or is_node_prod
+
+    @property
+    def is_development(self) -> bool:
+        return not self.is_production
+
     # Authentication & Session Settings
     ENABLE_LEGACY_AUTH: bool = False  # Production default False: requires Firebase Auth
     AUTH_SECRET_KEY: str = "bharatbuy-procurement-secret-key-dev-change-in-prod"

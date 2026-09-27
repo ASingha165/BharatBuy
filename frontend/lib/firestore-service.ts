@@ -215,35 +215,56 @@ export async function recordProcurementRequestFirestore(
   }
 }
 
+/**
+ * Recursively strips undefined values and replaces them with null,
+ * ensuring 100% Firestore and JSON compatibility without throwing Unsupported field value: undefined.
+ */
+export function sanitizeForFirestore<T>(data: T): T {
+  if (data === undefined) return null as any;
+  if (data === null || typeof data !== 'object') return data;
+  if (data instanceof Date) return data.toISOString() as any;
+  if (Array.isArray(data)) {
+    return data.map(sanitizeForFirestore) as any;
+  }
+  const clean: Record<string, any> = {};
+  for (const [k, v] of Object.entries(data)) {
+    if (v !== undefined) {
+      clean[k] = sanitizeForFirestore(v);
+    } else {
+      clean[k] = null;
+    }
+  }
+  return clean as T;
+}
+
 export async function recordProcurementHistoryFirestore(
   fbUser: { uid: string },
   request: any,
-  response: any
+  response: any,
+  authToken?: string | null
 ): Promise<boolean> {
   if (typeof window === 'undefined' || !fbUser?.uid || !response?.request_id) return false;
-  const db = getFirestoreDb();
-  if (!db) return false;
 
   const nowIso = new Date().toISOString();
   const recommendations = response.recommendations || [];
-  const record: ProcurementHistoryRecord = {
+  const rawRecord = {
     procurement_id: response.request_id,
     uid: fbUser.uid,
     company_name: response.company || request.company || 'Enterprise Buyer',
-    analysis_created_at: serverTimestamp() as any,
-    updated_at: serverTimestamp() as any,
+    analysis_created_at: nowIso,
+    updated_at: nowIso,
     request_status: 'COMPLETED',
     ai_provider: response.explanation?.ai_provider || 'deterministic_fallback',
     request: {
-      description: request.description,
+      description: request.description ?? null,
       requirements: request.requirements || []
     },
     items: (response.items || []).map((item: any) => ({
       item_id: item.item_id,
       item_name: item.item_name,
-      quantity: item.normalized_profile?.quantity,
-      unit: item.normalized_profile?.unit,
-      specifications: item.normalized_profile?.specifications,
+      quantity: item.normalized_profile?.quantity ?? null,
+      unit: item.normalized_profile?.unit ?? null,
+      specifications: item.normalized_profile?.specifications ?? null,
       applicable_standards: (item.standards || []).map((standard: any) => standard.is_code),
       compliance_status: item.compliance_status
     })),
@@ -268,7 +289,7 @@ export async function recordProcurementHistoryFirestore(
       recommendation_summary: response.package_sourcing?.explanation || ''
     },
     analysis: {
-      readiness: response.package_evaluation?.overall_readiness_score,
+      readiness: response.package_evaluation?.overall_readiness_score ?? 0,
       standards_matches: (response.items || []).flatMap((item: any) => (item.standards || []).map((standard: any) => standard.is_code)),
       supplier_results: recommendations,
       cost_results: recommendations.map((item: any) => item.cost_assessment),
@@ -277,54 +298,131 @@ export async function recordProcurementHistoryFirestore(
     }
   };
 
+  const record: ProcurementHistoryRecord = sanitizeForFirestore(rawRecord);
+  let saved = false;
+
+  // 1. Primary authenticated backend API persistence
   try {
-    await setDoc(doc(db, 'users', fbUser.uid, 'procurement_history', response.request_id), record);
-    return true;
-  } catch (err) {
-    console.warn('[FIRESTORE] Procurement history save note:', err);
-    return false;
+    const { getFirebaseAuth } = await import('./firebase');
+    const auth = getFirebaseAuth();
+    const token = authToken || (await auth?.currentUser?.getIdToken()) || null;
+    if (token) {
+      const { saveProcurementHistoryApi } = await import('./api');
+      const apiRes = await saveProcurementHistoryApi(record, token);
+      if (apiRes && apiRes.success) {
+        saved = true;
+      }
+    }
+  } catch (apiErr) {
+    console.warn('[HISTORY API] Save attempt note:', apiErr);
   }
+
+  // 2. Direct Cloud Firestore persistence (if client Firestore is configured and reachable)
+  const db = getFirestoreDb();
+  if (db) {
+    try {
+      await setDoc(doc(db, 'users', fbUser.uid, 'procurement_history', response.request_id), {
+        ...record,
+        analysis_created_at: serverTimestamp(),
+        updated_at: serverTimestamp()
+      });
+      saved = true;
+    } catch (fsErr) {
+      console.warn('[FIRESTORE] Procurement history save note:', fsErr);
+    }
+  }
+
+  return saved;
 }
 
 export async function listProcurementHistoryFirestore(
-  fbUser: { uid: string }
+  fbUser: { uid: string },
+  authToken?: string | null
 ): Promise<{ records: ProcurementHistoryRecord[]; error: boolean }> {
   if (typeof window === 'undefined' || !fbUser?.uid) return { records: [], error: true };
-  const db = getFirestoreDb();
-  if (!db) return { records: [], error: true };
+
+  // 1. Primary authenticated backend API retrieval
   try {
-    const historyQuery = query(collection(db, 'users', fbUser.uid, 'procurement_history'), orderBy('analysis_created_at', 'desc'));
-    const snapshot = await getDocs(historyQuery);
-    const records = snapshot.docs.map((item) => {
-      const data = item.data() as any;
-      const normalizeTimestamp = (value: any): string => {
-        if (value?.toDate) return value.toDate().toISOString();
-        return typeof value === 'string' ? value : new Date(0).toISOString();
-      };
-      return {
-        ...data,
-        analysis_created_at: normalizeTimestamp(data.analysis_created_at),
-        updated_at: normalizeTimestamp(data.updated_at)
-      } as ProcurementHistoryRecord;
-    });
-    return { records, error: false };
-  } catch (err) {
-    console.warn('[FIRESTORE] Procurement history list note:', err);
-    return { records: [], error: true };
+    const { getFirebaseAuth } = await import('./firebase');
+    const auth = getFirebaseAuth();
+    const token = authToken || (await auth?.currentUser?.getIdToken()) || null;
+    if (token) {
+      const { listProcurementHistoryApi } = await import('./api');
+      const apiRecords = await listProcurementHistoryApi(token);
+      if (Array.isArray(apiRecords)) {
+        return { records: apiRecords, error: false };
+      }
+    }
+  } catch (apiErr) {
+    console.warn('[HISTORY API] List attempt note:', apiErr);
   }
+
+  // 2. Client Firestore retrieval with bounded timeout (5 seconds max so it never spins indefinitely)
+  const db = getFirestoreDb();
+  if (db) {
+    try {
+      const historyQuery = query(collection(db, 'users', fbUser.uid, 'procurement_history'), orderBy('analysis_created_at', 'desc'));
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('Firestore getDocs timed out')), 5000)
+      );
+      const snapshot = await Promise.race([getDocs(historyQuery), timeoutPromise]);
+      const records = snapshot.docs.map((item) => {
+        const data = item.data() as any;
+        const normalizeTimestamp = (value: any): string => {
+          if (value?.toDate) return value.toDate().toISOString();
+          return typeof value === 'string' ? value : new Date(0).toISOString();
+        };
+        return {
+          ...data,
+          analysis_created_at: normalizeTimestamp(data.analysis_created_at),
+          updated_at: normalizeTimestamp(data.updated_at)
+        } as ProcurementHistoryRecord;
+      });
+      return { records, error: false };
+    } catch (err) {
+      console.warn('[FIRESTORE] Procurement history list note:', err);
+    }
+  }
+
+  return { records: [], error: true };
 }
 
-export async function deleteProcurementHistoryFirestore(uid: string, procurementId: string): Promise<boolean> {
+export async function deleteProcurementHistoryFirestore(
+  uid: string,
+  procurementId: string,
+  authToken?: string | null
+): Promise<boolean> {
   if (typeof window === 'undefined' || !uid || !procurementId) return false;
-  const db = getFirestoreDb();
-  if (!db) return false;
+  let deleted = false;
+
+  // 1. Try authenticated backend API
   try {
-    await deleteDoc(doc(db, 'users', uid, 'procurement_history', procurementId));
-    return true;
-  } catch (err) {
-    console.warn('[FIRESTORE] Procurement history delete note:', err);
-    return false;
+    const { getFirebaseAuth } = await import('./firebase');
+    const auth = getFirebaseAuth();
+    const token = authToken || (await auth?.currentUser?.getIdToken()) || null;
+    if (token) {
+      const { deleteProcurementHistoryApi } = await import('./api');
+      const apiRes = await deleteProcurementHistoryApi(procurementId, token);
+      if (apiRes && apiRes.success) {
+        deleted = true;
+      }
+    }
+  } catch (apiErr) {
+    console.warn('[HISTORY API] Delete attempt note:', apiErr);
   }
+
+  // 2. Try client Firestore
+  const db = getFirestoreDb();
+  if (db) {
+    try {
+      await deleteDoc(doc(db, 'users', uid, 'procurement_history', procurementId));
+      deleted = true;
+    } catch (err) {
+      console.warn('[FIRESTORE] Procurement history delete note:', err);
+    }
+  }
+
+  return deleted;
 }
 
 /**

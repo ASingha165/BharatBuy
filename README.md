@@ -73,34 +73,31 @@ The engine provides a clean **`RecommendationModel` interface**:
 ## Quick Start Guide
 
 ### 1. Prerequisites
-- Python 3.12+
+- Python 3.12+ (in `backend/.venv_clean`)
 - Node.js 18+ & npm
 
-### 2. Backend Setup
+### 2. Canonical Development Startup (One Single Command)
 ```powershell
-# Navigate to backend directory
-cd backend
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Start FastAPI dev server
-python -m uvicorn app.main:app --port 8000 --reload
-```
-
-Backend API Docs will be available at: `http://localhost:8000/api/v1/docs`
-
-### 3. Frontend Setup
-```powershell
-# Navigate to frontend directory
-cd frontend
-
-# Install dependencies
-npm install
-
-# Start Next.js dev server
+# From repository root:
 npm run dev
 ```
+
+> **What `npm run dev` does:**
+> - Verifies ports `3000` (Next.js) and `8000` (FastAPI) are free, reporting any conflicting processes before launching.
+> - Starts the FastAPI / Uvicorn backend on `http://localhost:8000` using `backend\.venv_clean\Scripts\python.exe`.
+> - Starts the Next.js frontend on `http://localhost:3000`.
+> - Performs automated startup health checks against `http://localhost:8000/api/v1/health`.
+> - Provides graceful shutdown: pressing `Ctrl+C` cleanly terminates both frontend and backend processes without orphan tasks.
+
+- **Frontend Application**: `http://localhost:3000`
+- **Backend API Docs**: `http://localhost:8000/api/v1/docs`
+- **Backend Health Check**: `http://localhost:8000/api/v1/health`
+
+### 3. Individual Service Startup (Optional)
+If running services in separate terminals:
+- **Backend only**: `npm run dev:backend`
+- **Frontend only**: `npm run dev:frontend`
+
 ---
 
 ## Phase 2: Sourcing Intelligence Architecture

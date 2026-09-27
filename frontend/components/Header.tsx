@@ -17,32 +17,38 @@ export const Header: React.FC = () => {
   useEffect(() => {
     let cancelled = false;
 
-    // Timeout sentinel: if the health request takes longer than 8 seconds,
+    // Timeout sentinel: if the initial health request takes longer than 4 seconds,
     // mark as unavailable so the UI doesn't stay stuck at "Connecting to Engine..."
-    const timeoutId = setTimeout(() => {
+    let timeoutId: NodeJS.Timeout | null = setTimeout(() => {
       if (!cancelled) {
         setHealth({ status: 'UNAVAILABLE', database: false, total_standards: 0 });
       }
-    }, 8000);
+    }, 4000);
 
-    getHealthStatus()
-      .then((data) => {
-        if (!cancelled) {
-          clearTimeout(timeoutId);
-          setHealth(data);
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          clearTimeout(timeoutId);
-          // Backend unreachable — show UNAVAILABLE instead of staying at "Connecting"
-          setHealth({ status: 'UNAVAILABLE', database: false, total_standards: 0 });
-        }
-      });
+    const fetchHealth = () => {
+      getHealthStatus()
+        .then((data) => {
+          if (!cancelled) {
+            if (timeoutId) clearTimeout(timeoutId);
+            setHealth(data);
+          }
+        })
+        .catch(() => {
+          if (!cancelled) {
+            if (timeoutId) clearTimeout(timeoutId);
+            // Backend unreachable — show UNAVAILABLE instead of staying at "Connecting"
+            setHealth({ status: 'UNAVAILABLE', database: false, total_standards: 0 });
+          }
+        });
+    };
+
+    fetchHealth();
+    const intervalId = setInterval(fetchHealth, 8000);
 
     return () => {
       cancelled = true;
       clearTimeout(timeoutId);
+      clearInterval(intervalId);
     };
   }, []);
 
@@ -108,10 +114,15 @@ export const Header: React.FC = () => {
                 <span>Hybrid BM25+Vector</span>
               </div>
               <span className="text-white/20 hidden lg:inline">|</span>
-              {health.gemini_configured ? (
+              {health.gemini_configured && health.gemini_available !== false ? (
                 <span className="hidden lg:inline-flex items-center gap-1 bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-mono font-semibold px-2 py-0.5 rounded-DEFAULT text-[10px] tracking-wide">
                   <span className="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
                   GEMINI ACTIVE
+                </span>
+              ) : health.gemma_configured && health.gemma_available !== false ? (
+                <span className="hidden lg:inline-flex items-center gap-1 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-mono font-semibold px-2 py-0.5 rounded-DEFAULT text-[10px] tracking-wide">
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
+                  GEMMA ACTIVE
                 </span>
               ) : (
                 <span className="hidden lg:inline-flex items-center gap-1 bg-slate-500/20 text-slate-300 border border-slate-500/30 font-mono font-semibold px-2 py-0.5 rounded-DEFAULT text-[10px] tracking-wide">

@@ -18,14 +18,18 @@ def _extract_token_from_request(request: Request) -> Optional[str]:
     # 1. Check Authorization Bearer header (explicit credential takes precedence)
     auth_header = request.headers.get("Authorization")
     if auth_header and auth_header.startswith("Bearer "):
-        return auth_header[7:].strip()
+        token = auth_header[7:].strip()
+        logger.info(f"[AUTH] Extracted Bearer token from header (length: {len(token)})")
+        return token
 
     # 2. Check HTTP-only cookie (fallback for browser sessions)
     cookie_token = request.cookies.get(settings.AUTH_COOKIE_NAME)
     if cookie_token:
+        logger.info(f"[AUTH] Extracted token from session cookie (length: {len(cookie_token)})")
         return cookie_token
 
     return None
+
 
 def get_current_user_optional(
     request: Request,

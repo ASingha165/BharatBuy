@@ -10,3 +10,6 @@ def test_health_endpoint():
     assert data["status"] in ["healthy", "degraded"]
     assert data["database"] is True
     assert data["total_standards"] > 0
+    assert "firebase_admin_configured" in data
+    assert data["firebase_project_id"] == "bharatbuy-d4b11"
+

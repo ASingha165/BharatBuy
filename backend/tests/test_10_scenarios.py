@@ -15,7 +15,10 @@ from backend.app.models.responses import (
     NormalizedRequirementItem
 )
 
-client = TestClient(app)
+client = TestClient(
+    app,
+    headers={"Authorization": "Bearer test_mock_token:usr_scenarios:scenarios@enterprise.in"}
+)
 
 def test_scenario_1_triple_category():
     """Scenario 1: Multi-category package (Cable + TMT + PV)."""

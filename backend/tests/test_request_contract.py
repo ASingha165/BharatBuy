@@ -12,7 +12,11 @@ import pytest
 from fastapi.testclient import TestClient
 from backend.app.main import app
 
-client = TestClient(app, raise_server_exceptions=False)
+client = TestClient(
+    app,
+    raise_server_exceptions=False,
+    headers={"Authorization": "Bearer test_mock_token:usr_contract:buyer@test.in"}
+)
 
 # ──────────────────────────────────────────────────────────────────────────────
 # 1. Single structured procurement item serializes correctly
@@ -210,7 +214,8 @@ def test_http_422_produces_validation_error():
 # 10. HTTP 401 — unauthorized protected endpoint
 # ──────────────────────────────────────────────────────────────────────────────
 def test_http_401_on_protected_endpoint_without_token():
-    r = client.get("/api/v1/auth/me")
+    unauth_client = TestClient(app, raise_server_exceptions=False)
+    r = unauth_client.get("/api/v1/auth/me")
     assert r.status_code == 401
     body = r.json()
     assert "detail" in body

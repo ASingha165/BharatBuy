@@ -181,7 +181,11 @@ def test_procurement_analyze_endpoint_preserves_semantics():
             }
         ]
     }
-    response = client.post("/api/v1/procurement/analyze", json=payload)
+    response = client.post(
+        "/api/v1/procurement/analyze",
+        json=payload,
+        headers={"Authorization": "Bearer test_mock_token:usr_verify:buyer@test.in"}
+    )
     assert response.status_code == 200
     data = response.json()
     

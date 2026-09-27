@@ -7,7 +7,10 @@ from backend.app.services.evidence_service import EvidenceService
 from backend.app.services.sourcing_service import SourcingService
 from backend.app.models.requests import ProcurementAnalysisRequest, ProcurementRequirementItem, ManualVerifyRequest
 
-client = TestClient(app)
+client = TestClient(
+    app,
+    headers={"Authorization": "Bearer test_mock_token:usr_phase6:buyer@test.in"}
+)
 
 def test_health_endpoint_production_contract():
     """

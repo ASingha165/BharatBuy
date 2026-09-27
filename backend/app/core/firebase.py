@@ -88,22 +88,46 @@ def verify_firebase_id_token(id_token: str) -> Optional[Dict[str, Any]]:
         }
 
     if not FIREBASE_ADMIN_AVAILABLE:
+        logger.warning("[FIREBASE] firebase-admin package is not available.")
         return None
 
-    initialize_firebase_admin()
+    app = initialize_firebase_admin()
+    if not app:
+        logger.warning("[FIREBASE] Firebase Admin app is not initialized.")
+        return None
 
+    # 1. First attempt verification using standard auth.verify_id_token
+    # clock_skew_seconds=60 tolerates normal NTP clock drift between client machine and Google servers
     try:
-        decoded_token = auth.verify_id_token(token, check_revoked=False)
+        decoded_token = auth.verify_id_token(token, app=app, check_revoked=False, clock_skew_seconds=60)
+        logger.info(f"[FIREBASE] Verified Firebase ID token for UID: {decoded_token.get('uid')}")
         return decoded_token
     except auth.ExpiredIdTokenError:
-        logger.debug("[FIREBASE] Firebase ID token has expired.")
+        logger.warning("[FIREBASE] Firebase ID token has expired.")
         return None
     except auth.RevokedIdTokenError:
-        logger.debug("[FIREBASE] Firebase ID token has been revoked.")
+        logger.warning("[FIREBASE] Firebase ID token has been revoked.")
         return None
     except auth.InvalidIdTokenError as e:
-        logger.debug(f"[FIREBASE] Invalid Firebase ID token: {e}")
+        logger.warning(f"[FIREBASE] Invalid Firebase ID token: {e}")
         return None
     except Exception as e:
-        logger.debug(f"[FIREBASE] Token verification error: {e}")
-        return None
+        # 2. If standard verification fails due to missing service account private key (e.g. DefaultCredentialsError),
+        # verify against Google's public x509 certificates for the project using TokenVerifier.
+        # This securely validates RS256 signature, expiration, audience, and issuer without requiring private keys.
+        try:
+            from firebase_admin import _token_gen
+            verifier = _token_gen.TokenVerifier(app)
+            decoded_token = verifier.verify_id_token(token, clock_skew_seconds=60)
+            logger.info(f"[FIREBASE] Verified Firebase ID token via public certificates for UID: {decoded_token.get('uid')}")
+            return decoded_token
+        except auth.ExpiredIdTokenError:
+            logger.warning("[FIREBASE] Firebase ID token has expired.")
+            return None
+        except auth.InvalidIdTokenError as inv_e:
+            logger.warning(f"[FIREBASE] Invalid Firebase ID token: {inv_e}")
+            return None
+        except Exception as v_err:
+            logger.warning(f"[FIREBASE] Token verification error: {v_err}")
+            return None
+
